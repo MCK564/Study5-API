@@ -1,0 +1,27 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: NOTIFICATION-SERVICE
+  data:
+    mongodb:
+      url: mongodb://root:123456@localhost:27017/notification-service?authSource=admin
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: khamai05767@gmail.com
+    password: ckcc dktp xqfz cshw
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+
+
+eureka:
+  client:
+    service-url:
+      default-zone: http://localhost:8761/eureka

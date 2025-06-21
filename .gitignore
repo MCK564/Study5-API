@@ -1,0 +1,60 @@
+.gitignore
+target/
+data/
+volume-data/
+
+
+docker-compose.yml
+
+# Maven build
+/target/
+/**/target/
+
+# IntelliJ IDEA
+*.iml
+.idea/
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+logs/
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment & secrets
+.env
+.env.local
+application-dev.yml
+application-prod.yml
+application-local.yml
+
+# Java build
+*.class
+*.jar
+*.war
+
+# Coverage / test
+jacoco.exec
+coverage/
+test-output/
+
+# Node.js (nếu có frontend)
+node_modules/
+dist/
+build/
+
+# Docker
+*.pid
+*.sock
+
+# Others (optional)
+*.swp
+*.bak
+*.old
+
+*.json

@@ -1,0 +1,27 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.study5</groupId>
+    <artifactId>study5-api</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>common/common-dtos</module>
+        <module>common/common-utils</module>
+        <module>common/common-feign</module>
+        <module>common/common-security</module>
+        <module>common/common-responses</module>
+        <module>common/common-constants</module>
+        <module>common/common-exceptions</module>
+        <module>auth-service</module>
+        <module>user-service</module>
+        <module>product-service</module>
+        <module>upload-service</module>
+        <module>notification-service</module>
+        <module>api-gateway</module>
+        <module>eureka-server</module>
+    </modules>
+</project>
