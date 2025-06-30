@@ -6,11 +6,15 @@ eureka:
     serviceUrl:
       defaultZone: http://lcoalhost:8761/eureka
 
+api:
+  prefix: /api/v1
+
+
 spring:
   application:
     name: PRODUCT-SERVICE
   datasource:
-    url:
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3307/study5_product?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: ${MYSQL_ROOT_PASSWORD:123456}

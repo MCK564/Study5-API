@@ -1,13 +1,15 @@
 package com.mck.study5.product_service.models;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+@EqualsAndHashCode(callSuper = true)
+@Data
+@Entity
 @Table(name="words")
 @AllArgsConstructor
 @NoArgsConstructor

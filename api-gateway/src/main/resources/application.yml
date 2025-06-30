@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: api-gateway
+    name: API-GATEWAY
   cloud:
     gateway:
       mvc:
@@ -31,12 +31,12 @@ spring:
           - id: notification-service
             uri: lb://NOTIFICATION-SERVICE
             predicates:
-              - Path=/api/v1/notification
+              - Path=/api/v1/notifications
 
           - id: upload-service
             uri: lb://UPLOAD-SERVICE
             predicates:
-              -Path=/api/v1/upload-service
+              -Path=/api/v1/uploads
 
 
   security:

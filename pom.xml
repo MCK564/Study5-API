@@ -9,13 +9,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>common/common-dtos</module>
-        <module>common/common-utils</module>
-        <module>common/common-feign</module>
-        <module>common/common-security</module>
-        <module>common/common-responses</module>
-        <module>common/common-constants</module>
-        <module>common/common-exceptions</module>
+        <module>common</module>
         <module>auth-service</module>
         <module>user-service</module>
         <module>product-service</module>

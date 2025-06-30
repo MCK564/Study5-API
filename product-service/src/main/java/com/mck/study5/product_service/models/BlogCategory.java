@@ -1,16 +1,19 @@
 package com.mck.study5.product_service.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import dtos.response.blogs.BlogCategoryResponse;
+import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
 
+@EqualsAndHashCode(callSuper = true)
+@Data
+@Entity
 @Table(name="blog_category")
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,4 +24,12 @@ public class BlogCategory extends BaseEntity{
     @OneToMany(mappedBy = "category",fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Blog> blogs = new HashSet<>();
+
+    public static BlogCategoryResponse toResponse(BlogCategory blogCategory){
+        return BlogCategoryResponse.builder()
+                .id(blogCategory.getId())
+                .name(blogCategory.getName())
+                .build();
+
+    }
 }
