@@ -1,8 +1,8 @@
 package com.mck.study5.product_service.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import dtos.response.courses.CourseResponse;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 @EqualsAndHashCode(callSuper = true)
@@ -23,6 +23,11 @@ public class Course extends BaseEntity{
     private Integer assignment;
     private Integer registeredStudent;
     private Integer expireTime; //month
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="subject_id")
+    @JsonManagedReference
+    private Subject subject;
 
     public static CourseResponse toResponse(Course course){
         return CourseResponse.builder()

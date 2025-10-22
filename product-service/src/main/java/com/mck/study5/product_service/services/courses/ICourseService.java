@@ -1,6 +1,6 @@
 package com.mck.study5.product_service.services.courses;
 
-import dtos.request.course.CourseDTO;
+import com.mck.study5.product_service.dtos.request.course.CourseDTO;
 import dtos.response.courses.CourseListResponse;
 import dtos.response.courses.CourseResponse;
 import org.springframework.stereotype.Service;
@@ -14,5 +14,5 @@ public interface ICourseService {
     CourseResponse deleteCourseById(Long id);
     CourseListResponse getAllCourses(int page, int size);
     CourseListResponse findAllByConditions(int page, int size, List<String> conditions);
-
+    CourseListResponse findBySubjectID(Long id);
 }

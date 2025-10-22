@@ -3,6 +3,7 @@ target/
 data/
 volume-data/
 
+*.zip
 
 docker-compose.yml
 

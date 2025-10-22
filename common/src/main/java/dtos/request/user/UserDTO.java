@@ -20,4 +20,5 @@ public class UserDTO {
 
     @ImageFile
     private MultipartFile banner;
+
 }

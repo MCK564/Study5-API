@@ -18,5 +18,6 @@ public class BlogResponse {
     private String subtitle;
     private String content;
     private String writer;
+    private Long views;
     private List<String> keywords = new ArrayList<>();
 }

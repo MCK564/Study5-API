@@ -26,9 +26,13 @@ public class User {
     @JsonIgnore
     private List<TrainingHistory> trainingHistories = new ArrayList<>();
 
+    private List<Integer> courses = new ArrayList<>();
+
     private String name;
     private String email;
     private String avatar;
     private String fog;
+    private String banner;
+    private Boolean status;
 
 }

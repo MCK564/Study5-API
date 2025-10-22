@@ -1,13 +1,14 @@
 package exceptions;
 
 import constants.MessageKeys;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import response.ApiResponse;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(DataNotFoundException.class)
+    @ExceptionHandler({DataNotFoundException.class, EntityNotFoundException.class})
     public ApiResponse<String> handleDataNotFoundException(DataNotFoundException ex){
         return ApiResponse.failure(ex.getMessage(),404, MessageKeys.DATA_NOT_FOUND);
     }
@@ -31,4 +32,6 @@ public class GlobalExceptionHandler {
     public ApiResponse<String> handlePermissionDenyException(PermissionDenyException ex){
         return ApiResponse.failure(ex.getMessage(),403, MessageKeys.FORBIDDEN);
     }
+
+
 }

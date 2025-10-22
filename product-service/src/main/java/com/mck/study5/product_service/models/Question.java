@@ -15,6 +15,8 @@ import lombok.*;
 public class Question extends BaseEntity{
     private String script;
     private String question;
+    private String questionImage;
+    private String audio;
     private String transcript;
     private String answerA;
     private String answerB;
@@ -29,5 +31,4 @@ public class Question extends BaseEntity{
     private String category;
     private String difficultyLevel;
     private String type;
-
 }

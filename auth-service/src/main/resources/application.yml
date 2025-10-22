@@ -22,9 +22,16 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MYSQLDialect
         format_sql: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id:
 
-api:
-  prefix: /api/v1
+
+
+
 
 jwt:
   expiration: 2952000

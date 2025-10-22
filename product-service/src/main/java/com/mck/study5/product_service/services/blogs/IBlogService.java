@@ -1,7 +1,9 @@
 package com.mck.study5.product_service.services.blogs;
 
-import dtos.request.blog.BlogDTO;
+import com.mck.study5.product_service.dtos.request.blog.BlogCategoryDTO;
+import com.mck.study5.product_service.dtos.request.blog.BlogDTO;
 import dtos.response.blogs.BlogCategoryListResponse;
+import dtos.response.blogs.BlogCategoryResponse;
 import dtos.response.blogs.BlogListResponse;
 import dtos.response.blogs.BlogResponse;
 import org.springframework.stereotype.Service;
@@ -14,4 +16,6 @@ public interface IBlogService {
     BlogResponse delete(Long id);
     BlogListResponse getBlogsByKeyword(String keyword, int page, int size);
     BlogCategoryListResponse getBlogCategories();
+    BlogCategoryResponse createOrUpdateCategory(BlogCategoryDTO blogCategoryDTO);
+    BlogCategoryResponse deleteCategory(Long id);
 }

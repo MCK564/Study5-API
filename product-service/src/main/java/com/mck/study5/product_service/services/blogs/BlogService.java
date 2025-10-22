@@ -4,12 +4,12 @@ import com.mck.study5.product_service.models.Blog;
 import com.mck.study5.product_service.models.BlogCategory;
 import com.mck.study5.product_service.repositories.BlogCategoryRepository;
 import com.mck.study5.product_service.repositories.BlogRepository;
-import dtos.request.blog.BlogDTO;
+import com.mck.study5.product_service.dtos.request.blog.BlogCategoryDTO;
+import com.mck.study5.product_service.dtos.request.blog.BlogDTO;
 import dtos.response.blogs.BlogCategoryListResponse;
 import dtos.response.blogs.BlogCategoryResponse;
 import dtos.response.blogs.BlogListResponse;
 import dtos.response.blogs.BlogResponse;
-import exceptions.DataNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -38,8 +38,12 @@ public class BlogService implements IBlogService{
 
     @Override
     public BlogResponse getBlog(Long id) {
-       if(blogRepository.existsById(id))
-           return Blog.toResponse(blogRepository.findById(id).get());
+       if(blogRepository.existsById(id)){
+           Blog existingBlog = blogRepository.findById(id).get();
+           existingBlog.setViews(existingBlog.getViews() + 1);
+           blogRepository.save(existingBlog);
+           return Blog.toResponse(existingBlog);
+       }
        return null;
     }
 
@@ -83,5 +87,31 @@ public class BlogService implements IBlogService{
         return BlogCategoryListResponse.builder()
                 .categories(responses)
                 .build();
+    }
+
+    @Override
+    public BlogCategoryResponse createOrUpdateCategory(BlogCategoryDTO dto) {
+        BlogCategory category ;
+        if(dto.getId()!=null){
+            category = blogCategoryRepository.findById(dto.getId()).get();
+            category.setName(dto.getName());
+
+        }
+        else{
+            category = BlogCategory.builder()
+                    .name(dto.getName())
+                    .build();
+        }
+        blogCategoryRepository.save(category);
+        return BlogCategory.toResponse(category);
+    }
+
+    @Override
+    public BlogCategoryResponse deleteCategory(Long id) {
+        BlogCategoryResponse response = BlogCategory.toResponse(blogCategoryRepository.findById(id)
+                .orElseThrow(()->new EntityNotFoundException("Category not found")));
+        blogCategoryRepository.deleteById(id);
+        return response;
+
     }
 }

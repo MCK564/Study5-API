@@ -5,6 +5,9 @@ import com.mck.study5.product_service.enums.ExamType;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
@@ -23,7 +26,10 @@ public class Exam extends BaseEntity{
     private Boolean completed;
     private Integer numberOfCompletion;
     private Integer numberOfQuestion;
+    private String thumbnail;
     private String term;
+
+    private List<Long> examinations = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name="category_id")

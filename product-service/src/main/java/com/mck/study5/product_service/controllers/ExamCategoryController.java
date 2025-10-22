@@ -1,6 +1,7 @@
 package com.mck.study5.product_service.controllers;
 
 
+import com.mck.study5.product_service.services.exams.IExamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,4 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("${api.prefix}/examCategory")
 @RequiredArgsConstructor
 public class ExamCategoryController {
+    private final IExamService examService;
+
+
 }

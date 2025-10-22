@@ -1,0 +1,180 @@
+version: "3.8"
+
+x-spring-service: &spring_svc
+  image: maven:3.9-eclipse-temurin-17
+  restart: unless-stopped
+  working_dir: /workspace
+  environment:
+    SPRING_PROFILES_ACTIVE: dev
+    SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/bank?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    SPRING_DATASOURCE_USERNAME: mck0506
+    SPRING_DATASOURCE_PASSWORD: 123456
+    SPRING_REDIS_HOST: redis
+    SPRING_REDIS_PORT: 6379
+    SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    MAVEN_OPTS: -Xms256m -Xmx768m
+  depends_on:
+    mysql:
+      condition: service_healthy
+    redis:
+      condition: service_started
+    kafka:
+      condition: service_healthy
+  volumes:
+    - ./services/shared:/workspace-shared:ro
+    - maven-cache:/root/.m2
+
+services:
+  mysql:
+    image: mysql:8.0.28
+    restart: always
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: bank
+      MYSQL_USER: mck0506
+      MYSQL_PASSWORD: 123456
+      MYSQL_HOST: mysql
+    volumes:
+      - D:/Docker/volume/mysql_28:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p123456"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [app-network]
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    restart: always
+    ports:
+      - "9000:80"
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_USER: root
+      MYSQL_PASSWORD: 123456
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks: [app-network]
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks: [app-network]
+
+  kafka:
+    image: apache/kafka:latest
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      CLUSTER_ID: 5L6g3nQJRjaYqerqfv4n3w
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 1
+      KAFKA_NUM_PARTITIONS: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    volumes:
+      - D:/Docker/volume/kafka-data:/var/lib/kafka/data
+    healthcheck:
+      test: [ "CMD", "/opt/kafka/bin/kafka-topics.sh", "--bootstrap-server", "kafka:9092", "--list" ]
+      interval: 10s
+      timeout: 10s
+      retries: 20
+    networks: [ app-network ]
+
+  api-gateway:
+    <<: *spring_svc
+    container_name: api-gateway
+    ports: ["8000:8080"]
+    volumes:
+      - ./api-gateway:/workspace
+      - maven-cache:/root/.m2
+    command: >
+      bash -lc "mvn -q -DskipTests spring-boot:run"
+
+  auth-service:
+    <<: *spring_svc
+    container_name: auth-service
+    ports: ["8001:8080"]
+    volumes:
+      - ./auth-service:/workspace
+      - maven-cache:/root/.m2
+    environment:
+      SPRING_APPLICATION_NAME: auth-service
+      JWT_SECRET: please_change_me
+      OTP_TTL_SECONDS: 300
+    command: >
+      bash -lc "mvn -q -DskipTests spring-boot:run"
+
+  user-service:
+    <<: *spring_svc
+    container_name: user-service
+    ports: ["8002:8080"]
+    volumes:
+      - ./user-service:/workspace
+      - maven-cache:/root/.m2
+    command: >
+      bash -lc "mvn -q -DskipTests spring-boot:run"
+
+  product-service:
+    <<: *spring_svc
+    container_name: product-service
+    ports: ["8003:8080"]
+    volumes:
+      - ./services/product-service:/workspace
+      - maven-cache:/root/.m2
+    command: >
+      bash -lc "mvn -q -DskipTests spring-boot:run"
+
+  payment-service:
+    <<: *spring_svc
+    container_name: payment-service
+    ports: ["8004:8080"]
+    volumes:
+      - ./payment-service:/workspace
+      - maven-cache:/root/.m2
+    command: >
+      bash -lc "mvn -q -DskipTests spring-boot:run"
+
+  notification-service:
+    <<: *spring_svc
+    container_name: notification-service
+    ports: ["8005:8080"]
+    volumes:
+      - ./notification-service:/workspace
+      - maven-cache:/root/.m2
+    environment:
+      CONSUME_TOPICS: otp_emails,success_payment
+    command: >
+      bash -lc "mvn -q -DskipTests spring-boot:run"
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  maven-cache:
+  redis-data:

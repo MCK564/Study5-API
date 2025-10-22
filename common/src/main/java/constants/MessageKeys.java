@@ -27,4 +27,9 @@ public class MessageKeys {
     public static final String INVALID_REQUEST_DATA = "INVALID_REQUEST_DATA";
     public static final String UNAUTHORIZED = "UNAUTHORIZED";
     public static final String FORBIDDEN = "FORBIDDEN";
+    public static final String NULL_REQUEST_DTO ="NULL_REQUEST_DTO";
+    public static final String SUBJECT_NOT_FOUND = "SUBJECT_NOT_FOUND";
+    public static final String INVALID_JWT_SIGNATURE = "INVALID_JWT_SIGNATURE";
+    public static final String SERVICE_UNAVAILABLE = "Service temporarily unavailable. Please try again later";
+
 }

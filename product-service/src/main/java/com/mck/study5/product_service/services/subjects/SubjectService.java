@@ -1,4 +1,50 @@
 package com.mck.study5.product_service.services.subjects;
 
-public class SubjectService {
+import com.mck.study5.product_service.models.Subject;
+import com.mck.study5.product_service.repositories.SubjectRepository;
+import constants.MessageKeys;
+import com.mck.study5.product_service.dtos.request.subject.SubjectDTO;
+import dtos.response.subject.SubjectListResponse;
+import dtos.response.subject.SubjectResponse;
+import exceptions.DataNotFoundException;
+import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
+@RequiredArgsConstructor
+public class SubjectService implements ISubjectService{
+    private final SubjectRepository subjectRepository;
+
+    @Override
+    public SubjectListResponse getSubjects() {
+        List<SubjectResponse> subjectResponses = subjectRepository
+                .findAll()
+                .stream().map(Subject::toResponse).toList();
+        return SubjectListResponse.builder()
+                .quantity(subjectResponses.size())
+                .subjects(subjectResponses)
+                .build();
+    }
+
+    @Override
+    public SubjectResponse createOrUpdateSubject(SubjectDTO dto) {
+       Subject subject;
+       if(dto.getId()!=null){
+           subject = subjectRepository.findById(dto.getId()).get();
+       }
+       else{
+           subject = new Subject();
+       }
+       subject.setName(dto.getName());
+       subjectRepository.save(subject);
+       return Subject.toResponse(subject);
+    }
+
+    @Override
+    public SubjectResponse deleteSubject(Long id) {
+       Subject subject = subjectRepository.findById(id)
+               .orElseThrow(()->new DataNotFoundException(MessageKeys.SUBJECT_NOT_FOUND));
+       subjectRepository.delete(subject);
+       return Subject.toResponse(subject);
+    }
 }

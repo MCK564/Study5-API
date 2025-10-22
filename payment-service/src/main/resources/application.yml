@@ -4,3 +4,16 @@ server:
 spring:
   application:
     name: PAYMENT-SERVICE
+  datasource:
+    url:  ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3307/study5_payment?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: ${MYSQL_ROOT_PASSWORD:123456}
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create-only
+  properties:
+    hibernate:
+      dialect: org.hibernate.dialect.MySQLDialect
+      format_sql: true

@@ -15,14 +15,14 @@ spring:
     name: USER-SERVICE
 
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3307/study5_users?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3307/study5_user?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: ${MYSQL_ROOT_PASSWORD:123456}
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: create-only
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect

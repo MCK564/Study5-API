@@ -1,7 +1,7 @@
 package com.mck.study5.product_service.models;
 
 
-import dtos.request.blog.BlogDTO;
+import com.mck.study5.product_service.dtos.request.blog.BlogDTO;
 import dtos.response.blogs.BlogResponse;
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,6 +20,7 @@ public class Blog extends BaseEntity{
     private String subtitle;
     private String content;
     private String writer;
+    private Long views;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
@@ -37,6 +38,7 @@ public class Blog extends BaseEntity{
                 .content(blog.getContent())
                 .writer(blog.getWriter())
                 .keywords(blog.getKeywords())
+                .views(blog.getViews())
                 .build();
     }
 
@@ -47,6 +49,7 @@ public class Blog extends BaseEntity{
                 .content(blogDTO.getContent())
                 .writer(blogDTO.getWriter())
                 .keywords(blogDTO.getKeywords())
+                .views(blogDTO.getViews())
                 .build();
     }
 }
