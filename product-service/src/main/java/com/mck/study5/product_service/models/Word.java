@@ -7,19 +7,22 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.*;
 
-@EqualsAndHashCode(callSuper = true)
-@Data
+
 @Entity
 @Table(name="words")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Setter
+@Getter
 public class Word extends BaseEntity{
     private String text;
     private String phonetic;
     private String typeOfText;
     private String AudioLink;
     private String definition;
+    private Long audioId;
+
 
     @ManyToOne
     @JoinColumn(name="flashcard_id")

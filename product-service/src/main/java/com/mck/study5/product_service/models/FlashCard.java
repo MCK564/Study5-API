@@ -10,21 +10,23 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@EqualsAndHashCode(callSuper = true)
-@Data
+
 @Entity
 @Table(name="flashcards")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Setter
+@Getter
 public class FlashCard extends BaseEntity {
     private String title;
     private String language;
     private String description;
     private Integer numberOfWord;
+    private Long thumbnailId;
+    private String thumbnailUrl;
 
     @OneToMany(mappedBy = "flashCard", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Word> words = new ArrayList<>();
-
 }

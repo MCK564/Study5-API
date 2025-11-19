@@ -1,26 +1,20 @@
 package com.mck.study5.product_service.dtos.request.course;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.mck.study5.product_service.image.ImageFile;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
-import validator.image.ImageFile;
+
 
 
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class CourseDTO {
     private Long id;
-
-    @JsonProperty("course_name")
-    private String courseName;
-
-    @JsonProperty("course_desc")
-    private String courseDescription;
-
+    private String name;
+    private String description;
     @JsonProperty("initial_price")
     private Double initialPrice;
 
@@ -29,9 +23,6 @@ public class CourseDTO {
 
     @JsonProperty("thumbnail")
     private String thumbnail;
-
-    @ImageFile
-    private MultipartFile avatar;
 
     @JsonProperty("teacher_desc")
     private String teacherDescription;
@@ -45,8 +36,11 @@ public class CourseDTO {
     private Integer registeredStudent;
 
     @JsonProperty("expire_time")
-    private Integer expireTime; //month
+    private String expireTime;
 
     @JsonProperty("subject_id")
     private Long subjectId;
+
+    @JsonProperty("study_time")
+    private Integer studyTime;
 }

@@ -1,6 +1,7 @@
 package com.mck.study5.upload_service.response;
 
-import constants.MessageKeys;
+
+import com.mck.study5.upload_service.constants.MessageKeys;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

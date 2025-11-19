@@ -6,58 +6,133 @@ api:
 
 spring:
   application:
-    name: API-GATEWAY
+    name: api-gateway
+
   cloud:
     gateway:
-      mvc:
-        routes:
-          - id: auth-service
-            uri: lb://AUTH-SERVICE
-            predicates:
-              - Path=/auth/**
+      discovery:
+        locator:
+          enabled: false
+          lower-case-service-id: true
+      server:
+        webflux:
+          routes:
+            # AUTH
+            - id: auth
+              uri: lb://auth-service
+              predicates:
+                - Path=/auth/**
 
-          - id: user-service
-            uri: lb://USER-SERVICE
-            predicates:
-              - Path=/api/v1/users/**
 
-          - id: product-service
-            uri: lb://PRODUCT-SERVICE
-            predicates:
-              - Path=/api/v1/products/**
+            # USER
+            - id: user
+              uri: lb://user-service
+              predicates:
+                - Path=/users/**
+              filters:
+                - name: RewritePath
+                  args:
+                    regexp: /user-service/?(?<remaining>.*)
+                    replacement: /${remaining}
+                - name: JwtHeaderFilter
+                  args:
+                    secretKey: ${jwt.secretKey}
 
-          - id: payment-service
-            uri: lb://PAYMENT-SERVICE
-            predicates:
-              - Path=/api/v1/payments/**
 
-          - id: notification-service
-            uri: lb://NOTIFICATION-SERVICE
-            predicates:
-              - Path=/api/v1/notifications/**
+            # PRODUCT
+            - id: product
+              uri: lb://product-service
+              predicates:
+                - Path=/products/**
+              filters:
+                - name: RewritePath
+                  args:
+                    regexp: /user-service/?(?<remaining>.*)
+                    replacement: /${remaining}
+                - name: JwtHeaderFilter
+                  args:
+                    secretKey: ${jwt.secretKey}
 
-          - id: upload-service
-            uri: lb://UPLOAD-SERVICE
-            predicates:
-              -Path=/api/v1/uploads/**
+            # PAYMENT
+            - id: payment
+              uri: lb://payment-service
+              predicates:
+                - Path=/payments/**
+              filters:
+                - name: RewritePath
+                  args:
+                    regexp: /user-service/?(?<remaining>.*)
+                    replacement: /${remaining}
+                - name: JwtHeaderFilter
+                  args:
+                    secretKey: ${jwt.secretKey}
+
+
+            # NOTIFICATION
+            - id: notification
+              uri: lb://notification-service
+              predicates:
+                - Path=/notifications/**
+              filters:
+                - name: RewritePath
+                  args:
+                    regexp: /user-service/?(?<remaining>.*)
+                    replacement: /${remaining}
+                - name: JwtHeaderFilter
+                  args:
+                    secretKey: ${jwt.secretKey}
+
+
+            # UPLOAD
+            - id: upload
+              uri: lb://upload-service
+              predicates:
+                - Path=/uploads/**,/downloads/**
+              filters:
+                - name: RewritePath
+                  args:
+                    regexp: /user-service/?(?<remaining>.*)
+                    replacement: /${remaining}
+                - name: JwtHeaderFilter
+                  args:
+                    secretKey: ${jwt.secretKey}
+
+
+              #LEARNING
+            - id: learning
+              uri: lb://learning-service
+              predicates:
+                - Path=/learning/**
+              filters:
+                - name: RewritePath
+                  args:
+                    regexp: /learning-service/?(?<remaining>.*)
+                    replacement: /${remaining}
+                - name: JwtHeaderFilter
+                  args:
+                    secretKey: ${jwt.secretKey}
+
+      default-filters:
+        - JwtHeaderFilter
+        - RemoveRequestHeader=Authorization
+        - RemoveRequestHeader=X-User-Id
+        - RemoveRequestHeader=X-Email
+        - RemoveRequestHeader=X-Roles
+
 
 
   security:
     oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://localhost:8181/realms/master
-      client:
         registration:
           google:
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_CLIENT_SECRET}
-            redirect-uri: "http://localhost:8090/auth/oauth2/code/google"
+            redirect-uri: "http://localhost:8090/gateway-auth/oauth2/code/google"
             scope: email, profile
           facebook:
             client-id: ${FACEBOOK_CLIENT_ID}
             client-secret: ${FACEBOOK_CLIENT_SECRET}
-            redirect-uri: "http://localhost:8090/auth/oauth2/code/facebook"
+            redirect-uri: "http://localhost:8090/gateway/auth/oauth2/code/facebook"
             scope: email, public_profile
         provider:
           facebook:
@@ -65,12 +140,34 @@ spring:
             token-uri: https://graph.facebook.com/v10.0/oauth/access_token
             user-info-uri: https://graph.facebook.com/me?fields=id,name,email,picture
 
+  devtools:
+    restart:
+      additional-paths: src/main/java, src/main/resources
+
 eureka:
   client:
+    register-with-eureka: true
+    fetch-registry: true
     service-url:
-      default-zone: http://localhost:8761/eureka
+      defaultZone: http://eureka-server:8761/eureka
+  instance:
+    prefer-ip-address: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
 
 jwt:
   expiration: 2952000
   expiration-refresh-token: 5184000
   secretKey: e672a8b64e2a5ab5da300537341d7af496f0059c56838a9a7c634591d2ad6b71
+
+
+
+logging:
+  level:
+    reactor.netty.http.server.AccessLog: INFO
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.web.reactive: DEBUG

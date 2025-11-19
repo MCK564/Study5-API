@@ -1,0 +1,24 @@
+package com.mck.study5.payment_service.kafka;
+
+
+import com.mck.study5.payment_service.constants.Topics;
+import org.apache.kafka.clients.admin.NewTopic;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.config.TopicBuilder;
+
+
+@ComponentScan
+
+@Configuration
+public class KafkaTopicsConfig {
+
+    @Bean
+    public NewTopic productLessonVideoUploadTopic(){
+        return TopicBuilder.name(Topics.NOTIFICATION_PAYMENT_SUCCESS)
+                .partitions(3)
+                .replicas(1)
+                .build();
+    }
+}

@@ -2,10 +2,11 @@ package com.mck.study5.user_service.models;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+@Getter
+@Setter
+@Entity
 @Table(name="tasks")
 @AllArgsConstructor
 @NoArgsConstructor

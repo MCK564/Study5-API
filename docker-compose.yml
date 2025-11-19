@@ -1,71 +1,56 @@
-version: "3.8"
 
-x-spring-service: &spring_svc
-  image: maven:3.9-eclipse-temurin-17
-  restart: unless-stopped
-  working_dir: /workspace
-  environment:
-    SPRING_PROFILES_ACTIVE: dev
-    SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/bank?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-    SPRING_DATASOURCE_USERNAME: mck0506
-    SPRING_DATASOURCE_PASSWORD: 123456
-    SPRING_REDIS_HOST: redis
-    SPRING_REDIS_PORT: 6379
-    SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-    MAVEN_OPTS: -Xms256m -Xmx768m
-  depends_on:
-    mysql:
-      condition: service_healthy
-    redis:
-      condition: service_started
-    kafka:
-      condition: service_healthy
-  volumes:
-    - ./services/shared:/workspace-shared:ro
-    - maven-cache:/root/.m2
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  maven-cache:
+  redis-data:
 
 services:
+
+
   mysql:
     image: mysql:8.0.28
+    container_name: mysql
     restart: always
-    ports:
-      - "3307:3306"
+    ports: ["3307:3306"]
     environment:
       MYSQL_ROOT_PASSWORD: 123456
-      MYSQL_DATABASE: bank
+      MYSQL_DATABASE: study5
       MYSQL_USER: mck0506
       MYSQL_PASSWORD: 123456
       MYSQL_HOST: mysql
     volumes:
-      - D:/Docker/volume/mysql_28:/var/lib/mysql
+      - ./mysql:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p123456"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p123456"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 20
     networks: [app-network]
 
   phpmyadmin:
     image: phpmyadmin:latest
+    container_name: phpmyadmin
     restart: always
-    ports:
-      - "9000:80"
+    ports: ["9000:80"]
     environment:
       PMA_HOST: mysql
       MYSQL_ROOT_PASSWORD: 123456
       MYSQL_USER: root
       MYSQL_PASSWORD: 123456
     depends_on:
-      mysql:
-        condition: service_healthy
+      mysql: { condition: service_healthy }
     networks: [app-network]
 
   redis:
     image: redis:7-alpine
+    container_name: redis
     restart: unless-stopped
-    ports:
-      - "6379:6379"
-    command: ["redis-server", "--appendonly", "yes"]
+    ports: ["6379:6379"]
+    command: ["redis-server","--appendonly","yes"]
     volumes:
       - redis-data:/data
     healthcheck:
@@ -78,8 +63,8 @@ services:
   kafka:
     image: apache/kafka:latest
     container_name: kafka
-    ports:
-      - "9092:9092"
+    restart: unless-stopped
+    ports: ["9092:9092"]
     environment:
       CLUSTER_ID: 5L6g3nQJRjaYqerqfv4n3w
       KAFKA_NODE_ID: 1
@@ -89,7 +74,6 @@ services:
       KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
-
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
@@ -97,84 +81,173 @@ services:
       KAFKA_NUM_PARTITIONS: 1
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
     volumes:
-      - D:/Docker/volume/kafka-data:/var/lib/kafka/data
+      - ./kafka-data:/var/lib/kafka/data
     healthcheck:
-      test: [ "CMD", "/opt/kafka/bin/kafka-topics.sh", "--bootstrap-server", "kafka:9092", "--list" ]
+      test: ["CMD","/opt/kafka/bin/kafka-topics.sh","--bootstrap-server","kafka:9092","--list"]
       interval: 10s
       timeout: 10s
       retries: 20
-    networks: [ app-network ]
+    networks: [app-network]
 
-  api-gateway:
-    <<: *spring_svc
-    container_name: api-gateway
-    ports: ["8000:8080"]
+  eureka-server:
+    image: maven:3.9-eclipse-temurin-21
+    container_name: eureka-server
+    working_dir: /workspace
+    restart: unless-stopped
+    ports:
+      - "8761:8761"
     volumes:
-      - ./api-gateway:/workspace
+      - ./eureka-server:/workspace
       - maven-cache:/root/.m2
-    command: >
-      bash -lc "mvn -q -DskipTests spring-boot:run"
+    environment:
+      - SPRING_DEVTOOLS_RESTART_POLL_INTERVAL=2s
+      - SPRING_DEVTOOLS_RESTART_QUIET_PERIOD=1s
+
+    healthcheck:
+      test: [ "CMD","/opt/kafka/bin/kafka-topics.sh","--bootstrap-server","kafka:9092","--list" ]
+      interval: 10s
+      timeout: 10s
+      retries: 20
+    command: [ "bash","-lc","mvn -q -DskipTests org.springframework.boot:spring-boot-maven-plugin:3.5.3:run" ]
+    networks: [app-network]
 
   auth-service:
-    <<: *spring_svc
+    image: maven:3.9-eclipse-temurin-21
     container_name: auth-service
-    ports: ["8001:8080"]
+    working_dir: /workspace
+    restart: unless-stopped
+    ports: ["8087:8087"]
+    env_file:
+      - ./auth-service/.env
     volumes:
       - ./auth-service:/workspace
       - maven-cache:/root/.m2
+      - ./auth-service/secrets/google_client_secret.json:/run/secrets/google_client_secret.json:ro
+      - ./auth-service/secrets/facebook_client_secret.json:/run/secrets/facebook_client_secret.json:ro
+
     environment:
-      SPRING_APPLICATION_NAME: auth-service
-      JWT_SECRET: please_change_me
-      OTP_TTL_SECONDS: 300
-    command: >
-      bash -lc "mvn -q -DskipTests spring-boot:run"
+      - SPRING_DEVTOOLS_RESTART_POLL_INTERVAL=2s
+      - SPRING_DEVTOOLS_RESTART_QUIET_PERIOD=1s
+      - GOOGLE_OAUTH_CREDENTIALS_PATH=/run/secrets/google_client_secret.json
+      - FACEBOOK_OAUTH_CREDENTIALS_PATH=/run/secrets/facebook_client_secret.json
+
+
+
+    depends_on:
+      mysql: { condition: service_healthy }
+      redis: { condition: service_started }
+      kafka: { condition: service_healthy }
+    command: ["bash","-lc","mvn -q -DskipTests org.springframework.boot:spring-boot-maven-plugin:3.5.3:run"]
+    networks: [app-network]
 
   user-service:
-    <<: *spring_svc
+    image: maven:3.9-eclipse-temurin-21
     container_name: user-service
-    ports: ["8002:8080"]
+    working_dir: /workspace
+    restart: unless-stopped
+    ports: ["8086:8086"]
+    env_file:
+      - ./user-service/.env
     volumes:
       - ./user-service:/workspace
       - maven-cache:/root/.m2
-    command: >
-      bash -lc "mvn -q -DskipTests spring-boot:run"
+    environment:
+      - SPRING_DEVTOOLS_RESTART_POLL_INTERVAL=2s
+      - SPRING_DEVTOOLS_RESTART_QUIET_PERIOD=1s
+
+    depends_on:
+      mysql: { condition: service_healthy }
+      redis: { condition: service_started }
+      kafka: { condition: service_healthy }
+    command: ["bash","-lc","mvn -q -DskipTests org.springframework.boot:spring-boot-maven-plugin:3.5.3:run"]
+    networks: [app-network]
 
   product-service:
-    <<: *spring_svc
+    image: maven:3.9-eclipse-temurin-21
     container_name: product-service
-    ports: ["8003:8080"]
+    working_dir: /workspace
+    restart: unless-stopped
+    ports: ["8083:8083"]
+    env_file:
+      - ./product-service/.env
     volumes:
-      - ./services/product-service:/workspace
+      - ./product-service:/workspace
       - maven-cache:/root/.m2
-    command: >
-      bash -lc "mvn -q -DskipTests spring-boot:run"
+    environment:
+      - SPRING_DEVTOOLS_RESTART_POLL_INTERVAL=2s
+      - SPRING_DEVTOOLS_RESTART_QUIET_PERIOD=1s
+
+    depends_on:
+      mysql: { condition: service_healthy }
+      redis: { condition: service_started }
+      kafka: { condition: service_healthy }
+    command: ["bash","-lc","mvn -q -DskipTests org.springframework.boot:spring-boot-maven-plugin:3.5.3:run"]
+    networks: [app-network]
 
   payment-service:
-    <<: *spring_svc
+    image: maven:3.9-eclipse-temurin-21
     container_name: payment-service
-    ports: ["8004:8080"]
+    working_dir: /workspace
+    restart: unless-stopped
+    ports: ["8084:8084"]
+    env_file:
+      - ./payment-service/.env
     volumes:
       - ./payment-service:/workspace
       - maven-cache:/root/.m2
-    command: >
-      bash -lc "mvn -q -DskipTests spring-boot:run"
+    depends_on:
+      mysql: { condition: service_healthy }
+      redis: { condition: service_started }
+      kafka: { condition: service_healthy }
+    command: ["bash","-lc","mvn -q -DskipTests org.springframework.boot:spring-boot-maven-plugin:3.5.3:run"]
+    networks: [app-network]
 
-  notification-service:
-    <<: *spring_svc
-    container_name: notification-service
-    ports: ["8005:8080"]
+
+  upload-service:
+    image: maven:3.9-eclipse-temurin-21
+    container_name: upload-service
+    working_dir: /workspace
+    restart: unless-stopped
+    ports: ["8085:8085"]
+    env_file:
+      - ./upload-service/.env
     volumes:
-      - ./notification-service:/workspace
+      - ./upload-service:/workspace
       - maven-cache:/root/.m2
+    depends_on:
+      mysql: { condition: service_healthy }
+      redis: { condition: service_started }
+      kafka: { condition: service_healthy }
+    command: ["bash","-lc","mvn -q -DskipTests org.springframework.boot:spring-boot-maven-plugin:3.5.3:run"]
+    networks: [app-network]
+
+  api-gateway:
+    image: maven:3.9-eclipse-temurin-21
+    container_name: api-gateway
     environment:
-      CONSUME_TOPICS: otp_emails,success_payment
-    command: >
-      bash -lc "mvn -q -DskipTests spring-boot:run"
-
-networks:
-  app-network:
-    driver: bridge
-
-volumes:
-  maven-cache:
-  redis-data:
+      - SPRING_APPLICATION_NAME=api-gateway
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=true
+      - SPRING_DEVTOOLS_RESTART_POLL_INTERVAL=2s
+      - SPRING_DEVTOOLS_RESTART_QUIET_PERIOD=1s
+      - JAVA_TOOL_OPTIONS=-Dreactor.netty.http.server.accessLogEnabled=true
+    working_dir: /workspace
+    restart: unless-stopped
+    ports: ["8090:8090"]
+    env_file:
+      - ./api-gateway/.env
+    volumes:
+      - ./api-gateway:/workspace
+      - maven-cache:/root/.m2
+    depends_on:
+      mysql: { condition: service_healthy }
+      redis: { condition: service_started }
+      kafka: { condition: service_healthy }
+      auth-service: { condition: service_started }
+      user-service: { condition: service_started }
+      product-service: { condition: service_started }
+      payment-service: { condition: service_started }
+      upload-service: { condition: service_started }
+      eureka-server: { condition: service_started }
+    command: ["bash","-lc","mvn -q -DskipTests org.springframework.boot:spring-boot-maven-plugin:3.5.3:run"]
+    networks: [app-network]

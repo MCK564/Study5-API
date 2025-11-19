@@ -4,16 +4,26 @@ server:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://eureka-server:8761/eureka
 
 api:
   prefix: /api/v1
 
+
+aws:
+  region: ${AWS_REGION:us-east-1}
+  s3:
+    bucket-name: ${AMAZON_BUCKET_NAME:amzn-s3-study5-bucket}
+  access-key-id: ${AWS_ACCESS_KEY_ID:AKIAZDZTBPBHTPESG76T}
+  secret-key-id: ${AWS_SECRET_ACCESS_KEY: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}
+
+
+
 spring:
   application:
-    name: UPLOAD-SERVICE
+    name: upload-service
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3307/study5_upload?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://mysql:3306/study5_upload?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: ${MYSQL_ROOT_PASSWORD:123456}
@@ -29,4 +39,23 @@ spring:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
+  devtools:
+    restart:
+      additional-paths: src/main/java, src/main/resources
+  kafka:
+    bootstrap-servers: kafka:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
+
+    consumer:
+      group-id: upload-service
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "com.mck.study5.*"
+
+
 

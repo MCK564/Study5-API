@@ -3,10 +3,10 @@ server:
 
 spring:
   application:
-    name: NOTIFICATION-SERVICE
+    name: notification-service
   data:
     mongodb:
-      url: mongodb://root:123456@localhost:27017/notification-service?authSource=admin
+      url: mongodb://root:123456@:27017/notification-service?authSource=admin
   mail:
     host: smtp.gmail.com
     port: 587
@@ -18,10 +18,12 @@ spring:
           auth: true
           starttls:
             enable: true
-
+  devtools:
+    restart:
+      additional-paths: src/main/java, src/main/resources
 
 
 eureka:
   client:
     service-url:
-      default-zone: http://localhost:8761/eureka
+      default-zone: http://eureka-server:8761/eureka

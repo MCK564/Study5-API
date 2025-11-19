@@ -2,6 +2,7 @@ package com.mck.study5.upload_service.dtos.upload;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mck.study5.upload_service.image.ImageFile;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,12 +19,15 @@ public class UploadDTO {
     private Byte size;
     private String url;
     private String description;
+    private String mediaOwnerType;
+    private String mediaUsage;
 
     @ImageFile
     private MultipartFile file;
-    @JsonProperty("belong_to_id")
+
+    @NotNull
     private Long belongToId;
 
-    @JsonProperty("belong_to_object")
-    private String belongToObject; // avatar, thumbnail,
+    @NotNull
+    private String belongToObject; // avatar, thumbnail
 }

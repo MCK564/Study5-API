@@ -2,25 +2,29 @@ package com.mck.study5.product_service.models;
 
 
 import com.mck.study5.product_service.dtos.request.blog.BlogDTO;
-import dtos.response.blogs.BlogResponse;
+import com.mck.study5.product_service.responses.blogs.BlogResponse;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
 
-@EqualsAndHashCode(callSuper = true)
-@Data
+
 @Entity
 @Table(name="blogs")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Getter
+@Setter
 public class Blog extends BaseEntity{
     private String title;
     private String subtitle;
     private String content;
     private String writer;
     private Long views;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private BlogCategory category;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(

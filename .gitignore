@@ -2,8 +2,11 @@
 target/
 data/
 volume-data/
-
+mysql/
 *.zip
+kafka-data/
+google_client_secret.json
+facebook_client_secret.json
 
 docker-compose.yml
 
@@ -28,7 +31,7 @@ logs/
 Thumbs.db
 
 # Environment & secrets
-.env
+auth-service/.env
 .env.local
 application-dev.yml
 application-prod.yml

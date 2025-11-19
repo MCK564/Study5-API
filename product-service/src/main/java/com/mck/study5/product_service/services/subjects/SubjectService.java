@@ -1,16 +1,20 @@
 package com.mck.study5.product_service.services.subjects;
 
+import com.mck.study5.product_service.constants.MessageKeys;
+import com.mck.study5.product_service.exceptions.DataNotFoundException;
 import com.mck.study5.product_service.models.Subject;
 import com.mck.study5.product_service.repositories.SubjectRepository;
-import constants.MessageKeys;
+
 import com.mck.study5.product_service.dtos.request.subject.SubjectDTO;
-import dtos.response.subject.SubjectListResponse;
-import dtos.response.subject.SubjectResponse;
-import exceptions.DataNotFoundException;
+import com.mck.study5.product_service.responses.subject.SubjectListResponse;
+import com.mck.study5.product_service.responses.subject.SubjectResponse;
+
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 @RequiredArgsConstructor
 public class SubjectService implements ISubjectService{
     private final SubjectRepository subjectRepository;

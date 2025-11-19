@@ -1,26 +1,27 @@
 package com.mck.study5.upload_service.models;
 
+import com.mck.study5.upload_service.kafka.events.MediaKind;
+import com.mck.study5.upload_service.kafka.events.MediaOwnerType;
+import com.mck.study5.upload_service.kafka.events.MediaUsage;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+@Getter
+@Setter
 @Entity
 @Table(name="audios")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Audio {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class Audio extends BaseEntity{
     private String name;
     private String quality;
-    private Byte size;
+    private Long size;
     private String url;
     private String description;
-
-    @Column(name = "belong_to_id")
+    private String belongToObject;
     private Long belongToId;
+    private String mediaKind;
+    private String mediaUsage;
+    private String mediaOwnerType;
 }

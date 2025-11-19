@@ -1,6 +1,7 @@
 package com.mck.study5.auth_service.response;
 
-import constants.MessageKeys;
+
+import com.mck.study5.auth_service.constants.MessageKeys;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,6 +24,7 @@ public class ApiResponse<T> {
     public static <T> ApiResponse<T> failure(T data, int code, String message) {
         return new ApiResponse<> (code,false, message, null);
     }
+
 
 
 }

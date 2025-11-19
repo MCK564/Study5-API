@@ -3,19 +3,20 @@ package com.mck.study5.user_service.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
+@Entity
 @Table(name="schedules")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Schedule {
-    private Long id;
+public class Schedule extends BaseEntity{
+
     private String title;
     private String description;
 
@@ -27,4 +28,6 @@ public class Schedule {
     @JoinColumn(name = "user_id")
     @JsonManagedReference
     private User user;
+    private String status;
+
 }

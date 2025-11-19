@@ -1,19 +1,50 @@
 server:
   port: 8084
 
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://eureka-server:8761/eureka
+
+
 spring:
   application:
-    name: PAYMENT-SERVICE
+    name: payment-service
   datasource:
-    url:  ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3307/study5_payment?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://mysql:3306/study5_payment?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: ${MYSQL_ROOT_PASSWORD:123456}
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: create-only
+      ddl-auto: none
   properties:
     hibernate:
       dialect: org.hibernate.dialect.MySQLDialect
       format_sql: true
+  devtools:
+    restart:
+      additional-paths: src/main/java, src/main/resources
+  kafka:
+    bootstrap-servers: kafka:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: true
+
+    consumer:
+      group-id: payment-service
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "com.mck.study5.*"
+
+vnpay:
+  tmn_code: NQEXRUA7
+  hash_secret: VO80JER5TMM37D05B0CVP1G6TG48CEKI
+  url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+  return_url: http://localhost:8090/payments/vnpay_return
+  return_client_url: http://localhost:5173/new-post?payment-status=

@@ -14,6 +14,7 @@ import lombok.*;
 @Builder
 public class Payment extends BaseEntity{
     private Long userId;
+    private String email;
     private Long courseId;
     private String description;
     private PaymentStatus paymentStatus;

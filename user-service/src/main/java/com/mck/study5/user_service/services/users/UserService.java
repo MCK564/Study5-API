@@ -1,4 +1,57 @@
 package com.mck.study5.user_service.services.users;
 
-public class UserService {
+
+import com.mck.study5.user_service.dtos.requests.UserUpdateDTO;
+import com.mck.study5.user_service.dtos.responses.users.CourseResponse;
+import com.mck.study5.user_service.dtos.responses.users.UserDetailResponse;
+import com.mck.study5.user_service.exceptions.DataNotFoundException;
+import com.mck.study5.user_service.models.User;
+import com.mck.study5.user_service.repositories.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class UserService implements IUserService{
+    private final UserRepository userRepository;
+
+    private void updateUser(User user, UserUpdateDTO dto){
+        user.setName(dto.getName());
+        user.setAddress(dto.getAddress());
+        user.setEmail(dto.getEmail());
+        user.setPhone(dto.getPhone());
+        //check if there is attached image file.
+//        kafka publish upload message and get the new image link
+
+
+    }
+
+    @Override
+    public UserDetailResponse getUserDetail(Long userId) {
+        User existedUser = userRepository.findById(userId)
+                .orElseThrow(()->new DataNotFoundException("User not found"));
+
+        return UserDetailResponse.fromUser(existedUser);
+    }
+
+    @Override
+    public UserDetailResponse updateUserDetail(Long userId, UserUpdateDTO dto) {
+        User existedUser = userRepository.findById(userId)
+                .orElseThrow(()->new DataNotFoundException("User not found"));
+        updateUser(existedUser, dto);
+        User updatedUser = userRepository.save(existedUser);
+        return UserDetailResponse.fromUser(updatedUser);
+    }
+
+    @Override
+    public CourseResponse getCourse(Long userId) {
+        if(userRepository.existsById(userId)){
+            User existedUser = userRepository.findById(userId)
+                    .orElseThrow(()->new DataNotFoundException("User not found"));
+            return CourseResponse.builder()
+                    .courses(existedUser.getCourses())
+                    .build();
+        }
+        return null;
+    }
 }

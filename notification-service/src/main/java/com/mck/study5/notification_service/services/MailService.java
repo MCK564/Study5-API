@@ -1,7 +1,8 @@
 package com.mck.study5.notification_service.services;
 
 
-import com.mck.study5.notification_service.constant.MessageKeys;
+
+import com.mck.study5.notification_service.constants.MessageKeys;
 import com.mck.study5.notification_service.dto.MailDTO;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

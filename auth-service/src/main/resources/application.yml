@@ -1,16 +1,16 @@
 server:
-  port: 8084
+  port: 8087
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://eureka-server:8761/eureka
 
 spring:
   application:
-    name: AUTH-SERVICE
+    name: auth-service
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3307/study5_auth?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://mysql:3306/study5_auth?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: ${MYSQL_ROOT_PASSWORD:123456}
@@ -20,21 +20,70 @@ spring:
       ddl-auto: none
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MYSQLDialect
+        dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
   security:
     oauth2:
       client:
         registration:
           google:
-            client-id:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            redirect-uri: "http://localhost:8090/auth/oauth2/code/google"
+            scope: email, profile
+          facebook:
+            client-id: ${FACEBOOK_CLIENT_ID}
+            client-secret: ${FACEBOOK_CLIENT_SECRET}
+            redirect-uri: "http://localhost:8090/auth/oauth2/code/facebook"
+            scope: email, public_profile
+        provider:
+          facebook:
+            authorization-uri: https://www.facebook.com/v10.0/dialog/oauth
+            token-uri: https://graph.facebook.com/v10.0/oauth/access_token
+            user-info-uri: https://graph.facebook.com/me?fields=id,name,email,picture
+  devtools:
+    restart:
+      additional-paths: src/main/java, src/main/resources
+  cloud:
+    gateway:
+      httpclient:
+        wiretap: true
+  kafka:
+    bootstrap-servers: kafka:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    properties:
+      spring.json.add.type.headers: false
+    topics:
+      user-created: user.created
 
+redirect-after: http://localhost:3000/oauth2/success
 
-
+app:
+  kafka:
+    topics:
+      user-social-signup: user.social.signup
 
 
 jwt:
   expiration: 2952000
   expiration-refresh-token: 5184000
   secretKey: e672a8b64e2a5ab5da300537341d7af496f0059c56838a9a7c634591d2ad6b71
+  ttlSeconds: 900
+  refreshTtlSeconds: 2592000
+  stateTtlSeconds: 300
 
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.springframework.web.servlet.DispatcherServlet: DEBUG
+    reactor.netty.http.client: DEBUG
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,mappings

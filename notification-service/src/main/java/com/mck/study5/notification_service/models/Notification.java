@@ -23,6 +23,4 @@ public class Notification {
     private Long userIdFrom;
     private NotificationType notificationType;
     private Long status = 0L;
-
-
 }

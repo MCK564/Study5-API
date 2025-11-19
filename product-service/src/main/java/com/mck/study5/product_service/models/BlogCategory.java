@@ -1,7 +1,7 @@
 package com.mck.study5.product_service.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import dtos.response.blogs.BlogCategoryResponse;
+import com.mck.study5.product_service.responses.blogs.BlogCategoryResponse;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
@@ -11,13 +11,14 @@ import lombok.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@EqualsAndHashCode(callSuper = true)
-@Data
+
 @Entity
 @Table(name="blog_category")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Getter
+@Setter
 public class BlogCategory extends BaseEntity{
     private String name;
 
