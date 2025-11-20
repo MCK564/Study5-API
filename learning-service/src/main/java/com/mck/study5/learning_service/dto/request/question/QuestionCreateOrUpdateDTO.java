@@ -1,12 +1,10 @@
 package com.mck.study5.learning_service.dto.request.question;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-public class QuestionDTO {
+public class QuestionCreateOrUpdateDTO {
     private Long id;
     private String script;
     private String question;

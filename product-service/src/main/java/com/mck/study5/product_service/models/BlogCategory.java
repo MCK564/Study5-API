@@ -31,6 +31,5 @@ public class BlogCategory extends BaseEntity{
                 .id(blogCategory.getId())
                 .name(blogCategory.getName())
                 .build();
-
     }
 }

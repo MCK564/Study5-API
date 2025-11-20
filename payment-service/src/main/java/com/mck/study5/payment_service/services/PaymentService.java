@@ -47,11 +47,13 @@ public class PaymentService implements IPaymentService {
         if(responseCode.equals("24")){
             urlReturn.append(MessageKeys.FAILURE);
         }
+        // localhost:3000/payments/history?success=true
         else if(responseCode.equals("00")){
             Payment existingPayment = paymentRepository.findById(orderId).get();
             existingPayment.setPaymentStatus(PaymentStatus.SUCCESS);
             paymentRepository.saveAndFlush(existingPayment);
 //          kafka send notification message
+//            kafka send userEnrollmentEvent
             urlReturn.append(MessageKeys.SUCCESS);
         }
         return new RedirectView(urlReturn.toString());

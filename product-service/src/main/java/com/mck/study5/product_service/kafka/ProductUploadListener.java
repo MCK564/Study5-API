@@ -38,15 +38,6 @@ public class ProductUploadListener {
     private void handleImageUploaded(MediaUploadedEvent event) {
         String ownerType = event.ownerType();
         switch (ownerType) {
-            case "QUESTION" -> {
-                questionRepository.findById(event.ownerId())
-                        .ifPresent(question -> {
-                            question.setImageUrl(event.url());
-                            question.setImageId(event.imageId());
-                            questionRepository.save(question);
-                            log.info("Updated QUESTION image: questionId={}, url={}", event.ownerId(), event.url());
-                        });
-            }
 
             case "FLASHCARD" -> {
                 flashCardRepository.findById(event.ownerId())
@@ -58,15 +49,7 @@ public class ProductUploadListener {
                         });
             }
 
-            case "EXAM" -> {
-                examRepository.findById(event.ownerId())
-                        .ifPresent(exam -> {
-                            exam.setThumbnailUrl(event.url());
-                            exam.setThumbnailId(event.imageId());
-                            examRepository.save(exam);
-                            log.info("Updated EXAM image: examId={}, url={}", event.ownerId(), event.url());
-                        });
-            }
+
 
             case "COURSE" -> {
                 courseRepository.findById(event.ownerId())
@@ -85,27 +68,15 @@ public class ProductUploadListener {
 
     private void handleAudioUploaded(MediaUploadedEvent event) {
         String ownerType = event.ownerType();
-        switch (ownerType) {
-            case "WORD" -> {
-                wordRepository.findById(event.ownerId())
-                        .ifPresent(word -> {
-                            word.setAudioLink(event.url());
-                            word.setAudioId(event.imageId());
-                            wordRepository.save(word);
-                            log.info("Updated WORD audio: wordId={}, url={}", event.ownerId(), event.url());
-                        }
-
-                        );
-            }
-            case "QUESTION" -> {
-                questionRepository.findById(event.ownerId())
-                        .ifPresent(question-> {
-                            question.setAudio(event.url());
-                            question.setAudioId(event.imageId());
-                            questionRepository.save(question);
-                            log.info("Updated QUESTION audio: questionId={}, url={}", event.ownerId(), event.url());
-                        });
-            }
+        if (ownerType.equals("WORD")) {
+            wordRepository.findById(event.ownerId())
+                    .ifPresent(word -> {
+                                word.setAudioLink(event.url());
+                                word.setAudioId(event.imageId());
+                                wordRepository.save(word);
+                                log.info("Updated WORD audio: wordId={}, url={}", event.ownerId(), event.url());
+                            }
+                    );
         }
     }
 }

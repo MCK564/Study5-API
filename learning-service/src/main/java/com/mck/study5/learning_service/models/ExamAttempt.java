@@ -15,11 +15,11 @@ import java.time.LocalDateTime;
 @Getter
 public class ExamAttempt extends BaseEntity{
     private Long userId;
-    private Integer score;
-    private Boolean completed;
+    private Double score= 0.0;
+    private Boolean completed=false;
     private LocalDateTime startAt;
     private LocalDateTime endAt;
-    private Integer totalCorrect;
+    private Integer totalCorrect=0;
     private Integer durationSec;
     private String status;
 

@@ -8,10 +8,7 @@ import com.mck.study5.learning_service.services.exams.IExamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/products/exam_category")
@@ -22,7 +19,7 @@ public class ExamCategoryController {
     @GetMapping("/search")
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<ApiResponse<?>> searchExamCategory(String keyword){
-        return null;
+        return ResponseEntity.ok(ApiResponse.success(examService.getExamCategories(),200,null));
     }
 
     @PostMapping("")
@@ -32,6 +29,11 @@ public class ExamCategoryController {
     }
 
 
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<?>> delete(@PathVariable Long id){
+        return null;
+    }
 
 
 }

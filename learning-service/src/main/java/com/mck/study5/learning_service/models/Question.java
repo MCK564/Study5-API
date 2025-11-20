@@ -31,4 +31,8 @@ public class Question extends BaseEntity{
     private String category;
     private String difficultyLevel;
     private String type;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "exam_id")
+    private Exam exam;
 }

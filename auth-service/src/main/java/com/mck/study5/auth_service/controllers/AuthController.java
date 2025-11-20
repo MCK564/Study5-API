@@ -60,6 +60,7 @@ public class AuthController {
         return ResponseEntity.ok(null);
     }
 
+
     @GetMapping("/oauth2/google/authorize")
     public ResponseEntity<ApiResponse<?>> googleUrl(
             @RequestParam(value = "redirect_after", required = false) String redirectAfter){
@@ -71,6 +72,7 @@ public class AuthController {
     public ResponseEntity<?> callbackGoogle(
             @RequestParam String code,
             @RequestParam String state){
+
 //        UserLoginResponse userLoginResponse = externalOAuthService.exchangeGoogleCode(code);
 //        String redirectUrl = UriComponentsBuilder.fromUriString(redirectAfter)
 //                .queryParam("accessToken", userLoginResponse.getAccessToken())
@@ -79,6 +81,7 @@ public class AuthController {
 //        return ResponseEntity.status(302)
 //                .header("Location", redirectUrl)
 //                .build();
+
         return ResponseEntity.ok(externalOAuthService.exchangeGoogleCode(code));
     }
 

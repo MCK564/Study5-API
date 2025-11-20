@@ -54,5 +54,5 @@ public class PaymentController {
         if(userId == null || role == null){return ResponseEntity.ok(ApiResponse.failure(null,401, MessageKeys.UNAUTHORIZED));}
         return ResponseEntity.ok(ApiResponse.success(paymentService.getAllPaymentsByUserId(Long.valueOf(userId)),200, MessageKeys.SUCCESS));}
 
-
+//    admin/history
 }

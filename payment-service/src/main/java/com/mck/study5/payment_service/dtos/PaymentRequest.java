@@ -5,10 +5,7 @@ import lombok.Data;
 
 @Data
 public class PaymentRequest {
-    @JsonProperty("user_id")
-    private Long userId;
     @JsonProperty("course_id")
     private Long courseId;
-    private String desc;
     private String email;
 }

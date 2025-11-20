@@ -18,14 +18,6 @@ public class ExamDTO {
     @JsonProperty("exam_category_id")
     private Long examCategoryId;
 
-    @JsonProperty("total_score")
-    private Integer totalScore;
-
-    private Boolean completed;
-
-    @JsonProperty("number_of_completion")
-    private Integer numberOfCompletion;
-
     @JsonProperty("number_of_question")
     private Integer numberOfQuestion;
 }

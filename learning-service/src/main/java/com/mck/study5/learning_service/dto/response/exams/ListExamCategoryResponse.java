@@ -1,4 +1,4 @@
-package com.mck.study5.learning_service.dto.response.questions;
+package com.mck.study5.learning_service.dto.response.exams;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,8 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class QuestionAnswerListResponse {
+public class ListExamCategoryResponse {
     private Integer quantity;
-    private List<QuestionAnswerResponse> responses = new ArrayList<>();
-
+    private List<ExamCategoryResponse> examCategories = new ArrayList<>();
 }

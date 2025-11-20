@@ -49,6 +49,7 @@ public class CourseController {
         return ResponseEntity.ok(ApiResponse.success(courseService.createOrUpdate(dto), 200, MessageKeys.SUCCESS));
     }
 
+
     @GetMapping("/unlock")
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<ApiResponse<?>> getOwnUnlockedCourses(
