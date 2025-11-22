@@ -11,4 +11,7 @@ import lombok.NoArgsConstructor;
 public class TaskRequestDTO {
     private Long id;
     private String content;
+
+    @JsonProperty("todo_list_id")
+    private Long todoListId;
 }

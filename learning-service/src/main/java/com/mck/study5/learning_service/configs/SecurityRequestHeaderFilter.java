@@ -27,7 +27,7 @@ public class SecurityRequestHeaderFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
 
         if (path.startsWith("/actuator/")
-                || "/exams/ping".equals(path)
+                || "/learning/exams/ping".equals(path)
         ) {
             filterChain.doFilter(request, response);
             return;
@@ -36,7 +36,7 @@ public class SecurityRequestHeaderFilter extends OncePerRequestFilter {
         String userId = request.getHeader("X-User-Id");
         String role = request.getHeader("X-User-Role");
 
-        if (userId != null && role != null) {
+        if (userId == null && role == null) {
            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
            response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write("""

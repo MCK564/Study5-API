@@ -40,27 +40,10 @@ public class UserController {
     @PostMapping(value = "/me", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<ApiResponse<UserDetailResponse>> mePost (
-            @RequestHeader(value = "X-User-Id", required = true) String userId,
-            @RequestHeader(value = "X-User-Role", required = true) String role,
+            @RequestHeader(value = "X-User-Id", required = true) Long userId,
             @Valid @ModelAttribute UserUpdateDTO userUpdateDTO
             ){
-        if(userId == null || role == null){
-            return ResponseEntity.ok(ApiResponse.failure(null, 401, MessageKeys.UNAUTHORIZED));
-        }
-        return ResponseEntity.ok(ApiResponse.success(userService.updateUserDetail(Long.valueOf(userId), userUpdateDTO), 200, MessageKeys.SUCCESS));
+        return ResponseEntity.ok(ApiResponse.success(userService.updateUserDetail(userId, userUpdateDTO), 200, MessageKeys.SUCCESS));
     }
-
-
-    @GetMapping("/users/me/courses")
-    @PreAuthorize("hasAnyRole('ADMIN','USER')")
-    public ResponseEntity<ApiResponse<?>> getCourses(
-            @RequestHeader(value="X-User-Id", required = true) String userId,
-            @RequestHeader(value="X-User-Role", required =   true) String role
-    ){
-        if(userId == null || role == null){return ResponseEntity.ok(ApiResponse.failure(null, 401, MessageKeys.UNAUTHORIZED));}
-        return ResponseEntity.ok(ApiResponse.success(userService.getCourse(Long.valueOf(userId)), 200, MessageKeys.SUCCESS));
-    }
-
-
 
 }

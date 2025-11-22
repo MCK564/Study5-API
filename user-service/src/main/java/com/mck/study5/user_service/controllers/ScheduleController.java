@@ -10,35 +10,35 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController()
-@RequestMapping("")
+@RequestMapping("/users/me/schedule")
 @RequiredArgsConstructor
 public class ScheduleController {
     private final IScheduleService scheduleService;
 
-    @GetMapping("/users/me/schedule")
+    @GetMapping("")
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
-    public ResponseEntity<ApiResponse<?>> getSchedule(@RequestHeader(value="X-User-Id", required = true) String userId){
-       return ResponseEntity.ok(ApiResponse.success(scheduleService.getAllOwnSchedule(Long.valueOf(userId)), 200, MessageKeys.SUCCESS));
+    public ResponseEntity<ApiResponse<?>> getSchedule(@RequestHeader(value="X-User-Id", required = true) Long userId){
+       return ResponseEntity.ok(ApiResponse.success(scheduleService.getAllOwnSchedule(userId), 200, MessageKeys.SUCCESS));
     }
 
 
-    @PostMapping("/users/me/schedule")
+    @PostMapping("")
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<ApiResponse<?>> createSchedule(
-            @RequestHeader(value="X-User-Id", required = true) String userId,
+            @RequestHeader(value="X-User-Id", required = true) Long userId,
             @RequestBody ScheduleRequestDTO dto
     ){
-        return ResponseEntity.ok(ApiResponse.success(scheduleService.createOrUpdateSchedule(dto), 200, MessageKeys.SUCCESS));
+        return ResponseEntity.ok(ApiResponse.success(scheduleService.createOrUpdateSchedule(dto,userId), 200, MessageKeys.SUCCESS));
     }
 
 
-    @DeleteMapping("/users/me/schedule/{id}")
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<ApiResponse<?>> deleteSchedule(
-            @RequestHeader(value="X-User-Id", required = true) String userId,
+            @RequestHeader(value="X-User-Id", required = true) Long userId,
             @PathVariable Long id
     ){
-        return ResponseEntity.ok(ApiResponse.success(scheduleService.deleteScheduleById(Long.valueOf(userId), id), 200, MessageKeys.SUCCESS));
+        return ResponseEntity.ok(ApiResponse.success(scheduleService.deleteScheduleById(userId, id), 200, MessageKeys.SUCCESS));
     }
 
 }

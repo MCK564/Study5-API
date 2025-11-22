@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 
 public interface IScheduleService {
-    ScheduleResponse createOrUpdateSchedule(ScheduleRequestDTO dto);
+    ScheduleResponse createOrUpdateSchedule(ScheduleRequestDTO dto,Long userId);
     ListScheduleResponse getAllOwnSchedule(Long userId);
     String deleteScheduleById(Long userId, Long ScheduleId );
 }

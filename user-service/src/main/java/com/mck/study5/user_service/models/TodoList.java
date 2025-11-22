@@ -19,9 +19,8 @@ import java.util.List;
 public class TodoList extends BaseEntity{
 
     private String title;
-    private TodoListType type;
+    private String type;
     private Integer status;
-
     private String implementedDay;
 
     @OneToMany(mappedBy = "todoList", fetch = FetchType.LAZY)

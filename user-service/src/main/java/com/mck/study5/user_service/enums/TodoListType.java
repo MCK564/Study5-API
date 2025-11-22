@@ -4,11 +4,22 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum TodoListType {
-    weekday, weekend, everyday;
+    WEEKDAY("WEEKDAY"),
+    WEEKEND("WEEKEND"),
+    EVERYDAY("EVERYDAY");
 
-    @JsonValue
-    public String toString() {
-        return name().toLowerCase();
+
+    private String type;
+    TodoListType(String type){
+        this.type = type;
+    }
+
+    public String getType(){
+        return this.type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     @JsonCreator

@@ -4,8 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
+
 public enum QuestionStatus {
     DRAFT("DRAFT"),
     PUBLISHED("PUBLISHED"),
@@ -18,6 +17,12 @@ public enum QuestionStatus {
         this.status = status;
     }
 
+    public String getStatus() {
+        return status;
+    }
+    public void setStatus(String status) {
+        this.status = status;
+    }
     @JsonCreator
     public static QuestionStatus fromString(String status)
     {

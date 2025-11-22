@@ -30,6 +30,8 @@ public class TaskService implements ITaskService{
                 .toList();
 
         return ListTaskResponse.builder()
+                .totalTask(taskResponses.size())
+                .tasks(taskResponses)
                 .build();
     }
 
@@ -51,13 +53,13 @@ public class TaskService implements ITaskService{
     }
 
     @Override
-    public TaskResponse createOrUpdate(TaskRequestDTO dto, Long todoListId) {
+    public TaskResponse createOrUpdate(TaskRequestDTO dto) {
         Task newTask;
         if(dto.getId()==null){
             newTask = new Task();
             newTask.setContent(dto.getContent());
-            TodoList existedTodoList = todoListRepository.findById(todoListId)
-                    .orElseThrow(()-> new DataNotFoundException(MessageKeys.DATA_NOT_FOUND+": todoList with id = "+ todoListId+""));
+            TodoList existedTodoList = todoListRepository.findById(dto.getTodoListId())
+                    .orElseThrow(()-> new DataNotFoundException(MessageKeys.DATA_NOT_FOUND+": todoList with id = "+ dto.getTodoListId()+""));
             newTask.setTodoList(existedTodoList);
         }
         else{

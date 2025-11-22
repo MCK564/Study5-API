@@ -18,7 +18,13 @@ public class ProductUploadListener {
     private final FlashCardRepository flashCardRepository;
     private final CourseRepository courseRepository;
 
-    @KafkaListener(topics = Topics.MEDIA_UPLOADED, groupId = "product-service")
+
+
+    @KafkaListener(
+            topics = Topics.MEDIA_UPLOADED,
+            groupId = "product-service",
+            containerFactory = "mediaUploadedKafkaListenerContainerFactory"
+    )
     public void handleProductUploaded(MediaUploadedEvent event){
         log.info("Product uploaded message received: {}", event);
 
@@ -78,5 +84,29 @@ public class ProductUploadListener {
                             }
                     );
         }
+
+
     }
+
+    @KafkaListener(
+            topics = Topics.MEDIA_DELETED,
+            groupId = "product-service",
+            containerFactory = "mediaUploadedKafkaListenerContainerFactory"
+    )
+    public void handleProductDeleted(MediaUploadedEvent event){
+        log.info("Product uploaded message received: {}", event);
+
+        if (event == null || event.ownerType() == null || event.mediaKind() == null) {
+            log.warn("MediaUploadedEvent not valid: {}", event);
+            return;
+        }
+
+        switch (event.mediaKind()) {
+            case "IMAGE" -> handleImageUploaded(event);
+            case "AUDIO" -> handleAudioUploaded(event);
+            default -> log.warn("Unsupported mediaKind: {}", event.mediaKind());
+        }
+    }
+
+
 }

@@ -9,7 +9,8 @@ google_client_secret.json
 facebook_client_secret.json
 
 docker-compose.yml
-
+mongo/
+secrets/
 # Maven build
 /target/
 /**/target/

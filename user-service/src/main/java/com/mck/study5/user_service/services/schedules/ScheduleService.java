@@ -6,8 +6,10 @@ import com.mck.study5.user_service.converter.Converter;
 import com.mck.study5.user_service.dtos.requests.ScheduleRequestDTO;
 import com.mck.study5.user_service.dtos.responses.schedules.ListScheduleResponse;
 import com.mck.study5.user_service.dtos.responses.schedules.ScheduleResponse;
+import com.mck.study5.user_service.exceptions.DataNotFoundException;
 import com.mck.study5.user_service.models.Schedule;
 import com.mck.study5.user_service.repositories.ScheduleRepository;
+import com.mck.study5.user_service.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,11 +19,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ScheduleService implements IScheduleService{
     private final ScheduleRepository scheduleRepository;
+    private final UserRepository userRepository;
     private final Converter converter;
 
 
     @Override
-    public ScheduleResponse createOrUpdateSchedule(ScheduleRequestDTO dto) {
+    public ScheduleResponse createOrUpdateSchedule(ScheduleRequestDTO dto, Long userId) {
         Schedule newSchedule;
         if(dto.getId() != null && scheduleRepository.existsById(dto.getId())){
             newSchedule = scheduleRepository.findById(dto.getId()).get();
@@ -30,9 +33,10 @@ public class ScheduleService implements IScheduleService{
             newSchedule.setStatus(dto.getStatus());
 
         }
-        else{newSchedule = converter.toSchedule(dto);}
+        else{newSchedule = converter.toSchedule(dto);
+        newSchedule.setUser(userRepository.findById(userId).get());
+        }
         Schedule savedSchedule = scheduleRepository.save(newSchedule);
-
         return ScheduleResponse.fromSchedule(savedSchedule);
     }
 
@@ -58,6 +62,6 @@ public class ScheduleService implements IScheduleService{
             scheduleRepository.deleteById(scheduleId);
             return MessageKeys.DELETE_SUCCESSFULLY+"schedule with id = "+ id;
         }
-        return MessageKeys.EMPTY_REQUEST+": no schedule with id = "+scheduleId;
+        throw new DataNotFoundException(MessageKeys.EMPTY_REQUEST+": no schedule with id = "+scheduleId);
     }
 }

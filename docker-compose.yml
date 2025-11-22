@@ -45,6 +45,26 @@ services:
       mysql: { condition: service_healthy }
     networks: [app-network]
 
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: 123456
+      MONGO_INITDB_DATABASE: notification-service
+    volumes:
+      - ./mongo:/data/db
+    healthcheck:
+      test: [ "CMD", "mongosh", "--username=root", "--password=123456", "--authenticationDatabase=admin", "--eval", "db.adminCommand('ping')" ]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 40s
+    networks: [ app-network ]
+
   redis:
     image: redis:7-alpine
     container_name: redis
@@ -162,12 +182,32 @@ services:
     command: ["bash","-lc","mvn -q -DskipTests org.springframework.boot:spring-boot-maven-plugin:3.5.3:run"]
     networks: [app-network]
 
+  notification-service:
+    image: maven:3.9-eclipse-temurin-21
+    container_name: notification-service
+    working_dir: /workspace
+    restart: unless-stopped
+    ports: [ "8082:8082" ]
+    env_file:
+      - ./notification-service/.env
+    volumes:
+      - ./notification-service:/workspace
+      - maven-cache:/root/.m2
+    environment:
+      - SPRING_DEVTOOLS_RESTART_POLL_INTERVAL=2s
+      - SPRING_DEVTOOLS_RESTART_QUIET_PERIOD=1s
+    depends_on:
+      mongodb: {condition: service_healthy }
+      redis: { condition: service_started }
+      kafka: { condition: service_healthy }
+    command: [ "bash","-lc","mvn -q -DskipTests org.springframework.boot:spring-boot-maven-plugin:3.5.3:run" ]
+    networks: [ app-network ]
+
+
   product-service:
     image: maven:3.9-eclipse-temurin-21
     container_name: product-service
     working_dir: /workspace
-    restart: unless-stopped
-    ports: ["8083:8083"]
     env_file:
       - ./product-service/.env
     volumes:
@@ -183,6 +223,30 @@ services:
       kafka: { condition: service_healthy }
     command: ["bash","-lc","mvn -q -DskipTests org.springframework.boot:spring-boot-maven-plugin:3.5.3:run"]
     networks: [app-network]
+
+
+  learning-service:
+    image: maven:3.9-eclipse-temurin-21
+    container_name: learning-service
+    working_dir: /workspace
+    restart: unless-stopped
+    ports: [ "8088:8088" ]
+    env_file:
+        - ./learning-service/.env
+    volumes:
+        - ./learning-service:/workspace
+        - maven-cache:/root/.m2
+    environment:
+        - SPRING_DEVTOOLS_RESTART_POLL_INTERVAL=2s
+        - SPRING_DEVTOOLS_RESTART_QUIET_PERIOD=1s
+
+    depends_on:
+        mysql: { condition: service_healthy }
+        redis: { condition: service_started }
+        kafka: { condition: service_healthy }
+    command: [ "bash","-lc","mvn -q -DskipTests org.springframework.boot:spring-boot-maven-plugin:3.5.3:run" ]
+    networks: [ app-network ]
+
 
   payment-service:
     image: maven:3.9-eclipse-temurin-21

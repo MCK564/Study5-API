@@ -1,11 +1,8 @@
-package com.mck.study5.learning_service.models;
+package com.mck.study5.learning_service.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
+
 public enum ExamStatus {
     PENDING("PENDING"),
     COMPLETED("COMPLETED");
@@ -15,6 +12,12 @@ public enum ExamStatus {
         this.status = status;
     }
 
+    public String getStatus() {
+        return status;
+    }
+    public void setStatus(String status) {
+        this.status = status;
+    }
     @JsonCreator
     public static ExamStatus fromString(String status)
     {

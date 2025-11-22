@@ -38,7 +38,7 @@ public class SecurityRequestHeaderFilter extends OncePerRequestFilter {
         String userId = request.getHeader("X-User-Id");
         String role = request.getHeader("X-User-Role");
 
-        if (userId != null && role != null) {
+        if (userId == null && role == null) {
            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
            response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write("""

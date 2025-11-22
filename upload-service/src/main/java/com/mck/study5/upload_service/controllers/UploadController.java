@@ -2,7 +2,9 @@ package com.mck.study5.upload_service.controllers;
 
 
 import com.mck.study5.upload_service.constants.MessageKeys;
+import com.mck.study5.upload_service.dtos.upload.AudioDTO;
 import com.mck.study5.upload_service.dtos.upload.UploadDTO;
+import com.mck.study5.upload_service.models.Audio;
 import com.mck.study5.upload_service.models.Image;
 import com.mck.study5.upload_service.response.ApiResponse;
 import com.mck.study5.upload_service.services.upload.IUploadService;
@@ -38,6 +40,23 @@ public class UploadController {
         }
         Image image = uploadService.uploadImage(dto);
         ApiResponse<Image> response = ApiResponse.success(image, 200, MessageKeys.SUCCESS);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping(
+            value = "/audios",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    public ResponseEntity<ApiResponse<?>> uploadAudio(
+        @Valid @ModelAttribute AudioDTO dto
+    ){
+        if(dto.getBelongToId()==null){
+            return ResponseEntity.ok(ApiResponse.failure("no_belong_to_id",400,MessageKeys.DATA_NOT_FOUND));
+        }
+        Audio audio = uploadService.uploadAudio(dto);
+        ApiResponse<Audio> response = ApiResponse.success(audio, 200, MessageKeys.SUCCESS);
         return ResponseEntity.ok(response);
     }
 

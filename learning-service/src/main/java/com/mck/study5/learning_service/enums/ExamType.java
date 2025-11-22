@@ -4,8 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
+
 public enum ExamType {
     LISTENING("LISTENING"),
     READING("READING"),
@@ -17,8 +16,13 @@ public enum ExamType {
     ExamType(String type){
         this.type = type;
     }
+    public String getType() {
+        return type;
+    }
 
-
+    public void setType(String type) {
+        this.type = type;
+    }
     @JsonCreator
     public static ExamType fromString(String type)
     {

@@ -35,11 +35,11 @@ public class TodoListService implements ITodoListService{
     }
 
     @Override
-    public TodoListResponse createOrUpdateTodoList(TodoListRequestDTO dto, Long scheduleId) {
+    public TodoListResponse createOrUpdateTodoList(TodoListRequestDTO dto) {
         TodoList newTodoList;
         if(dto.getId() != null && todoListRepository.existsById(dto.getId())){
             newTodoList =  todoListRepository.findById(dto.getId()).get();
-            newTodoList.setType(TodoListType.fromString(dto.getType()));
+            newTodoList.setType(dto.getType());
 
 //            not completed, need to handle string from client .
             newTodoList.setImplementedDay(dto.getImplementedDay());
@@ -47,7 +47,7 @@ public class TodoListService implements ITodoListService{
             newTodoList.setTitle(dto.getTitle());
         }
         else{newTodoList = converter.toTodoList(dto);
-            newTodoList.setSchedule(scheduleRepository.findById(scheduleId).get());
+            newTodoList.setSchedule(scheduleRepository.findById(dto.getScheduleId()).get());
         }
         TodoList savedTodoList = todoListRepository.save(newTodoList);
         return TodoListResponse.fromTodoList(savedTodoList);

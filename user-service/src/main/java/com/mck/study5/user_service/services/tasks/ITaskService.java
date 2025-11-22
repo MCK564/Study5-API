@@ -11,5 +11,5 @@ public interface ITaskService {
     ListTaskResponse findAllByTodoListId(Long todoListId);
     String deleteTaskById(Long id);
     TaskResponse findById(Long id);
-    TaskResponse createOrUpdate(TaskRequestDTO dto, Long todoListId);
+    TaskResponse createOrUpdate(TaskRequestDTO dto);
 }

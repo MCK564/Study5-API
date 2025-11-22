@@ -24,10 +24,11 @@ public class WebSecurityConfig2 {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         req->req
-                        .requestMatchers("/actuator/**")
+                        .requestMatchers("/actuator/**"
+                        ,"/learning/**")
                                 .permitAll()
                                 .anyRequest().authenticated()
-                ).addFilterBefore(securityRequestHeaderFilter, UsernamePasswordAuthenticationFilter.class)
+                ).addFilterBefore(securityRequestHeaderFilter, UsernamePasswordAuthenticationFilter.class);
                return http.build();
     }
 }

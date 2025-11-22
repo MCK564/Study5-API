@@ -47,7 +47,7 @@ spring:
               filters:
                 - name: RewritePath
                   args:
-                    regexp: /user-service/?(?<remaining>.*)
+                    regexp: /product-service/?(?<remaining>.*)
                     replacement: /${remaining}
                 - name: JwtHeaderFilter
                   args:
@@ -61,7 +61,7 @@ spring:
               filters:
                 - name: RewritePath
                   args:
-                    regexp: /user-service/?(?<remaining>.*)
+                    regexp: /payment-service/?(?<remaining>.*)
                     replacement: /${remaining}
                 - name: JwtHeaderFilter
                   args:
@@ -76,7 +76,7 @@ spring:
               filters:
                 - name: RewritePath
                   args:
-                    regexp: /user-service/?(?<remaining>.*)
+                    regexp: /notification-service/?(?<remaining>.*)
                     replacement: /${remaining}
                 - name: JwtHeaderFilter
                   args:
@@ -91,7 +91,7 @@ spring:
               filters:
                 - name: RewritePath
                   args:
-                    regexp: /user-service/?(?<remaining>.*)
+                    regexp: /upload-service/?(?<remaining>.*)
                     replacement: /${remaining}
                 - name: JwtHeaderFilter
                   args:
@@ -107,6 +107,20 @@ spring:
                 - name: RewritePath
                   args:
                     regexp: /learning-service/?(?<remaining>.*)
+                    replacement: /${remaining}
+                - name: JwtHeaderFilter
+                  args:
+                    secretKey: ${jwt.secretKey}
+
+              #NOTIFICATION
+            - id: notification
+              uri: lb://notification-service
+              predicates:
+                    - Path=/notifications/**
+              filters:
+                - name: RewritePath
+                  args:
+                    regexp: /notification-service/?(?<remaining>.*)
                     replacement: /${remaining}
                 - name: JwtHeaderFilter
                   args:

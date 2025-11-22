@@ -10,45 +10,35 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController()
-@RequestMapping("")
+@RequestMapping("/users/tasks")
 @RequiredArgsConstructor
 public class TaskController {
     private  final ITaskService taskService;
 
-    @DeleteMapping("users/tasks/{id}")
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<ApiResponse<?>> deleteTask(
-            @RequestHeader(value="X-User-Id", required = true) String userId,
+            @RequestHeader(value="X-User-Id", required = true) Long userId,
             @RequestHeader(value="X-User-Role", required = true) String role,
             @PathVariable Long id
     ){
-        if(userId == null || role == null)return ResponseEntity.ok(ApiResponse.failure(null, 401, MessageKeys.UNAUTHORIZED));
         return ResponseEntity.ok(ApiResponse.success(taskService.deleteTaskById(id), 200, MessageKeys.DELETE_SUCCESSFULLY));
     }
 
-    @GetMapping("/users/me/schedule/{scheduleId}/todo_list/{todoListId}")
+    @GetMapping("/search")
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
-    public ResponseEntity<ApiResponse<?>> deleteTask(
-            @RequestHeader(value="X-User-Id", required = true) String userId,
-            @RequestHeader(value="X-User-Role", required = true) String role,
-            @PathVariable Long scheduleId,
-            @PathVariable Long todoListId
+    public ResponseEntity<ApiResponse<?>> findByTodoListId(
+           @RequestParam Long todoListId
     ){
-        if(userId == null || role == null)return ResponseEntity.ok(ApiResponse.failure(null, 401, MessageKeys.UNAUTHORIZED));
         return ResponseEntity.ok(ApiResponse.success(taskService.findAllByTodoListId(todoListId), 200, MessageKeys.SUCCESS));
     }
 
-    @PostMapping("/users/me/schedule/{scheduleId}/todo_list/{todoListId}")
+    @PostMapping("")
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<ApiResponse<?>> createOrUpdateTask(
-            @RequestHeader(value="X-User-Id", required = true) String userId,
-            @RequestHeader(value="X-User-Role", required = true) String role,
-            @PathVariable Long scheduleId,
-            @PathVariable Long todoListId,
             @RequestBody TaskRequestDTO dto)
     {
-        if(userId == null || role == null)return ResponseEntity.ok(ApiResponse.failure(null, 401, MessageKeys.UNAUTHORIZED));
-        return ResponseEntity.ok(ApiResponse.success(taskService.createOrUpdate(dto, todoListId), 200, MessageKeys.SUCCESS));
+        return ResponseEntity.ok(ApiResponse.success(taskService.createOrUpdate(dto), 200, MessageKeys.SUCCESS));
     }
 
 }

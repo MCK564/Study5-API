@@ -19,7 +19,8 @@ public class AudioDTO {
     private Byte size;
     private String url;
     private String description;
-
+    private String mediaOwnerType;
+    private String mediaUsage;
     @AudioFile
     private MultipartFile file;
     private Long belongToId;

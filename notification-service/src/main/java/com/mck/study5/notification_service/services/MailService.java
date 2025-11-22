@@ -35,7 +35,7 @@ public class MailService {
             mailSender.send(mimeMessage);
             return MessageKeys.MAIL_SENT_SUCCESSFULLY+ " to "+ toEmail;
         }catch(Exception e){
-            return MessageKeys.MAIL_SENT_FAILED + " to "+ toEmail;
+            return MessageKeys.MAIL_SEND_FAIL + " to "+ toEmail;
         }
     }
 }

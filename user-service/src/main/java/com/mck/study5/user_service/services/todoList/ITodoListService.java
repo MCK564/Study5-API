@@ -8,6 +8,6 @@ import org.springframework.stereotype.Service;
 
 public interface ITodoListService {
     ListTodoListResponse getAllByScheduleId(Long scheduleId);
-    TodoListResponse createOrUpdateTodoList(TodoListRequestDTO dto, Long scheduleId);
+    TodoListResponse createOrUpdateTodoList(TodoListRequestDTO dto);
     String deleteTodoList( Long id);
 }

@@ -27,7 +27,7 @@ public class TodoListResponse {
     public static TodoListResponse fromTodoList(TodoList todoList){
         return TodoListResponse.builder()
                 .id(todoList.getId())
-                .type(todoList.getType().toString())
+                .type(todoList.getType())
                 .implementedDay(todoList.getImplementedDay())
                 .status(todoList.getStatus())
                 .title(todoList.getTitle())

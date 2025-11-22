@@ -18,7 +18,11 @@ public class ExamUploadListener {
     private final QuestionRepository questionRepository;
 
 
-    @KafkaListener(topics = Topics.MEDIA_UPLOADED, groupId = "product-service")
+    @KafkaListener(
+            topics = Topics.MEDIA_UPLOADED,
+            groupId = "learning-service",
+            containerFactory = "mediaUploadedKafkaListenerContainerFactory"
+    )
     public void handleProductUploaded(MediaUploadedEvent event){
         log.info("Product uploaded message received: {}", event);
 

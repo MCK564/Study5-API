@@ -14,13 +14,12 @@ import com.mck.study5.learning_service.dto.response.questions.QuestionResponse;
 import com.mck.study5.learning_service.exceptions.DataNotFoundException;
 import com.mck.study5.learning_service.models.ExamAttempt;
 import com.mck.study5.learning_service.models.ExamResult;
-import com.mck.study5.learning_service.models.ExamStatus;
+import com.mck.study5.learning_service.enums.ExamStatus;
 import com.mck.study5.learning_service.models.Question;
 import com.mck.study5.learning_service.repository.ExamAttemptRepository;
 import com.mck.study5.learning_service.repository.ExamRepository;
 import com.mck.study5.learning_service.repository.ExamResultRepository;
 import com.mck.study5.learning_service.repository.QuestionRepository;
-import com.mck.study5.learning_service.services.exams.IExamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

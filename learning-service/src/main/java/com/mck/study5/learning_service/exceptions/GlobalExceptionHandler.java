@@ -2,11 +2,9 @@ package com.mck.study5.learning_service.exceptions;
 
 
 
-import com.mck.study5.product_service.constants.MessageKeys;
-import com.mck.study5.product_service.exceptions.DataNotFoundException;
-import com.mck.study5.product_service.exceptions.InvalidDataException;
-import com.mck.study5.product_service.exceptions.PermissionDenyException;
-import com.mck.study5.product_service.responses.ApiResponse;
+
+import com.mck.study5.learning_service.constants.MessageKeys;
+import com.mck.study5.learning_service.dto.response.ApiResponse;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
