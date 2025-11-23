@@ -17,6 +17,7 @@ import java.util.List;
 @Getter
 @Setter
 public class Course extends BaseEntity{
+
     private String name;
     private String description;
     private Double initialPrice;

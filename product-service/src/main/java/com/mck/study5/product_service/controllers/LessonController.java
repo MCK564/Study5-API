@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.*;
 public class LessonController {
     private final ILessonService lessonService;
 
-    @GetMapping()
+    @GetMapping("/unlock")
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
-    public ResponseEntity<ApiResponse<?>> getListLessonBySubjectId(
+    public ResponseEntity<ApiResponse<?>> getListLessonDetailByCourseId(
             @RequestHeader(value = "X-User-Id", required = true)Long userId,
             @RequestParam(value="courseId", required = true) Long courseId
     ){
@@ -51,4 +51,15 @@ public class LessonController {
         lessonService.updateProgress(lessonId,userId);
         return ResponseEntity.ok(ApiResponse.success(null,200,MessageKeys.SUCCESS));
     }
+
+    @GetMapping("")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    public ResponseEntity<ApiResponse<?>> getListLessonByCourseId(
+            @RequestHeader(value = "X-User-Id", required = true)Long userId,
+            @RequestParam(value="courseId", required = true) Long courseId
+    ){
+        return ResponseEntity.ok(ApiResponse.success(lessonService
+                .getAllLessonsByCourseId(courseId),200, MessageKeys.SUCCESS));
+    }
+
 }

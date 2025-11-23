@@ -24,8 +24,8 @@ public class BlogController {
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<ApiResponse<BlogListResponse>> findAllByKeyword(
             @RequestParam String keyword,
-            @RequestParam("page") int page,
-            @RequestParam("size") int size
+            @RequestParam(value="page", defaultValue = "1") int page,
+            @RequestParam(value="size", defaultValue = "50") int size
     ){
         BlogListResponse blogListResponse = blogService.getBlogsByKeyword(keyword, page, size);
         return ResponseEntity.ok(ApiResponse.success(blogListResponse, HttpStatus.OK.value(),""));
@@ -56,6 +56,5 @@ public class BlogController {
         BlogResponse blog = blogService.delete(id);
         return ResponseEntity.ok(ApiResponse.success(blog,HttpStatus.OK.value(),MessageKeys.DELETE_SUCCESSFULLY));
     }
-
 
 }

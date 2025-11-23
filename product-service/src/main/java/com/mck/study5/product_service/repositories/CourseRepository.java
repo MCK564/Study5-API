@@ -14,9 +14,13 @@ import java.util.List;
 public interface CourseRepository extends JpaRepository<Course,Long> {
     List<Course> findAllBySubject_id(Long id);
 
-    @Query("SELECT c from Course c " +
-            "JOIN c.subject cs WHERE 1=1 AND " +
-            "(c.name LIKE %:keyword% OR cs.name LIKE %:keyword%)")
+    @Query("""
+       SELECT c FROM Course c
+       LEFT JOIN c.subject cs
+       WHERE (:keyword IS NULL OR :keyword = ''\s
+              OR LOWER(c.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
+              OR LOWER(cs.name) LIKE LOWER(CONCAT('%', :keyword, '%')))
+      \s""")
     Page<Course> findAll(@Param("keyword")String keyword, Pageable pageable);
 
 

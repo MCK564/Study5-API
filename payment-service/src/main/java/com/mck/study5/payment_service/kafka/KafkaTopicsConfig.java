@@ -15,10 +15,21 @@ import org.springframework.kafka.config.TopicBuilder;
 public class KafkaTopicsConfig {
 
     @Bean
-    public NewTopic productLessonVideoUploadTopic(){
+    public NewTopic paymentSuccessNotificationEvent(){
         return TopicBuilder.name(Topics.NOTIFICATION_PAYMENT_SUCCESS)
                 .partitions(3)
                 .replicas(1)
                 .build();
     }
+
+
+    @Bean
+    public NewTopic paymentSuccessUpdateCourseEnrollment(){
+        return TopicBuilder.name(Topics.PAYMENT_SUCCESS_SO_UPDATE_COURSE_ENROLLMENT)
+                .partitions(3)
+                .replicas(1)
+                .build();
+    }
+
+
 }

@@ -8,11 +8,13 @@ import com.mck.study5.product_service.models.CourseEnrollment;
 import com.mck.study5.product_service.models.Lesson;
 import com.mck.study5.product_service.models.Progress;
 import com.mck.study5.product_service.repositories.CourseEnrollmentRepository;
+import com.mck.study5.product_service.repositories.CourseRepository;
 import com.mck.study5.product_service.repositories.LessonRepository;
 import com.mck.study5.product_service.repositories.ProgressRepository;
 import com.mck.study5.product_service.responses.lessons.LessonDetailResponse;
 import com.mck.study5.product_service.responses.lessons.LessonResponse;
 import com.mck.study5.product_service.responses.lessons.ListLessonDetailResponse;
+import com.mck.study5.product_service.responses.lessons.ListLessonResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +27,7 @@ public class LessonService implements ILessonService {
     private final CourseEnrollmentRepository courseEnrollmentRepository;
     private final ProgressRepository progressRepository;
     private final Converter converter;
+    private final CourseRepository courseRepository;
 
     @Override
     public LessonDetailResponse getLessonDetailById(Long id, Long userId,Long courseId) {
@@ -70,10 +73,7 @@ public class LessonService implements ILessonService {
     @Override
     public LessonDetailResponse createOrUpdateLesson(LessonDTO dto) {
         Lesson newLesson = converter.fromLessonDTO(dto);
-        newLesson.setCourse(lessonRepository
-                .findById(dto.getCourseId())
-                .get()
-                .getCourse());
+        newLesson.setCourse(courseRepository.findById(dto.getCourseId()).get());
         Lesson savedLesson = lessonRepository.save(newLesson);
         return LessonDetailResponse.fromLesson(savedLesson);
     }
@@ -95,6 +95,18 @@ public class LessonService implements ILessonService {
                     (double)existedLesson.getCourse().getLessons().size());
             courseEnrollmentRepository.save(existedCourseEnrollment);
         }
+    }
+
+    @Override
+    public ListLessonResponse getAllLessonsByCourseId(Long courseId) {
+            List<LessonResponse> response = lessonRepository.findAllByCourse_Id(courseId)
+                    .stream()
+                    .map(LessonResponse::fromLesson)
+                    .toList();
+            return ListLessonResponse.builder()
+                    .responses(response)
+                    .quantity(response.size())
+                    .build();
     }
 
 

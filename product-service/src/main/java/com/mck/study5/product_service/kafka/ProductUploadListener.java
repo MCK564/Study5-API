@@ -17,6 +17,9 @@ public class ProductUploadListener {
     private final WordRepository   wordRepository;
     private final FlashCardRepository flashCardRepository;
     private final CourseRepository courseRepository;
+    private final LessonRepository lessonRepository;
+    private final BlogRepository blogRepository;
+
 
 
 
@@ -67,6 +70,16 @@ public class ProductUploadListener {
                         });
             }
 
+            case "BLOG" -> {
+                blogRepository.findById(event.ownerId())
+                        .ifPresent(blog ->{
+                            blog.setThumbnail(event.url());
+                            blog.setThumbnailId(event.imageId());
+                            blogRepository.save(blog);
+                            log.info("Updated BLOG image: blogId={}, url={}", event.ownerId(), event.url());
+                        });
+            }
+
             default -> log.info("Image uploaded for unsupported ownerType: {}", ownerType);
         }
     }
@@ -83,6 +96,15 @@ public class ProductUploadListener {
                                 log.info("Updated WORD audio: wordId={}, url={}", event.ownerId(), event.url());
                             }
                     );
+        }
+        else if( ownerType.equals("LESSON") ){
+            lessonRepository.findById(event.ownerId())
+                    .ifPresent(lesson -> {
+                        lesson.setThumbnail(event.url());
+                        lesson.setThumbnailId(event.imageId());
+                        lessonRepository.save(lesson);
+                        log.info("Updated LESSON audio: lessonId={}, url={}", event.ownerId(), event.url());
+                    });
         }
 
 

@@ -84,8 +84,12 @@ public class BlogService implements IBlogService{
 
     @Override
     public BlogCategoryListResponse getBlogCategories() {
-        List<BlogCategoryResponse>  responses = blogCategoryRepository.findAll()
-                .stream().map(BlogCategory::toResponse).toList();
+        List<BlogCategoryResponse>  responses = blogCategoryRepository
+                .findAll()
+                .stream()
+                .map(BlogCategory::toResponse)
+                .toList();
+
         return BlogCategoryListResponse.builder()
                 .categories(responses)
                 .build();

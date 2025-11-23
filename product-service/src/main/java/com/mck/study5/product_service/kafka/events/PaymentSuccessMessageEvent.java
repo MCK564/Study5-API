@@ -1,4 +1,4 @@
-package com.mck.study5.payment_service.kafka;
+package com.mck.study5.product_service.kafka.events;
 
 
 import lombok.Builder;

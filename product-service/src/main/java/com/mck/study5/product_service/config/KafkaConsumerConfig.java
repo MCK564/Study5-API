@@ -70,4 +70,7 @@ public class KafkaConsumerConfig {
         factory.setConsumerFactory(mediaDeletedEventConsumerFactory());
         return factory;
     }
+
+
+
 }

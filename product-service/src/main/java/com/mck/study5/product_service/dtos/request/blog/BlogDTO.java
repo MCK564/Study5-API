@@ -1,5 +1,6 @@
 package com.mck.study5.product_service.dtos.request.blog;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +15,7 @@ public class BlogDTO {
     private String subtitle;
     private String content;
     private String writer;
-    private Long views;
-    private List<String> keywords;
+    private String keywords;
+    @JsonProperty("category_id")
+    private Long categoryId;
 }

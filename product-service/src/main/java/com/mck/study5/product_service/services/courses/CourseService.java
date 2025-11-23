@@ -73,9 +73,14 @@ public class CourseService implements ICourseService{
 
     @Override
     public CourseListResponse findAllByConditions(int page, int size, String keyword) {
-        PageRequest pageRequest = PageRequest.of(page,size);
+        PageRequest pageRequest = PageRequest.of(page-1,size);
         Page<Course> pages = courseRepository.findAll(keyword, pageRequest);
-        List<CourseResponse> responses = pages.getContent().stream().map(Course::toResponse).toList();
+
+        List<CourseResponse> responses = pages.getContent()
+                .stream()
+                .map(Course::toResponse)
+                .toList();
+
         return CourseListResponse.builder()
                 .courses(responses)
                 .currentPage(page)

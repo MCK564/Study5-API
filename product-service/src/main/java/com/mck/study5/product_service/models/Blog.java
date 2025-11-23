@@ -19,20 +19,21 @@ import java.util.List;
 public class Blog extends BaseEntity{
     private String title;
     private String subtitle;
+
+    @Lob
+    @Column(columnDefinition = "LONGTEXT") // MySQL: TEXT / MEDIUMTEXT / LONGTEXT
     private String content;
     private String writer;
     private Long views;
+    private String thumbnail;
+    private Long thumbnailId;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="category_id")
     private BlogCategory category;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(
-            name="blog_keywords",
-            joinColumns = @JoinColumn(name = "blog_id")
-    )
-    @Column(name = "keyword")
-    private List<String> keywords;
+
+    private String keywords;
 
     public static BlogResponse toResponse(Blog blog)   {
         return BlogResponse.builder()
@@ -41,7 +42,7 @@ public class Blog extends BaseEntity{
                 .subtitle(blog.getSubtitle())
                 .content(blog.getContent())
                 .writer(blog.getWriter())
-                .keywords(blog.getKeywords())
+                .keyword(blog.getKeywords())
                 .views(blog.getViews())
                 .build();
     }
@@ -52,8 +53,6 @@ public class Blog extends BaseEntity{
                 .subtitle(blogDTO.getSubtitle())
                 .content(blogDTO.getContent())
                 .writer(blogDTO.getWriter())
-                .keywords(blogDTO.getKeywords())
-                .views(blogDTO.getViews())
                 .build();
     }
 }

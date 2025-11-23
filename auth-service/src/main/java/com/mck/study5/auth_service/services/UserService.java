@@ -1,5 +1,6 @@
 package com.mck.study5.auth_service.services;
 
+import com.mck.study5.auth_service.config.PasswordEncode;
 import com.mck.study5.auth_service.constants.MessageKeys;
 import com.mck.study5.auth_service.dto.LoginRequestDTO;
 import com.mck.study5.auth_service.dto.RegisterRequestDTO;
@@ -10,6 +11,7 @@ import com.mck.study5.auth_service.repositories.UserRepository;
 import com.mck.study5.auth_service.response.UserLoginResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,18 +19,19 @@ import org.springframework.stereotype.Service;
 public class UserService implements IUserService {
     private final IJwtService jwtService;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
 
     @Override
     public UserLoginResponse login(LoginRequestDTO dto) {
-       User existedUser = userRepository.findByEmail(dto.getEmail())
+       User existedUser = userRepository.findByUsername(dto.getUsername())
                .orElseThrow(()-> new InvalidDataException(MessageKeys.INVALID_REQUEST_DATA));
 
-       if(!existedUser.getPassword().equals(dto.getPassword())){
-           return UserLoginResponse.builder()
-                   .message(MessageKeys.WRONG_PASSWORD)
-                   .build();
-       }
+        if (!passwordEncoder.matches(dto.getPassword(), existedUser.getPassword())) {
+            return UserLoginResponse.builder()
+                    .message(MessageKeys.WRONG_PASSWORD)
+                    .build();
+        }
        String accessToken = jwtService.generateToken(existedUser);
        String refreshToken = jwtService.generateRefreshToken(existedUser);
 
@@ -60,6 +63,4 @@ public class UserService implements IUserService {
         userRepository.save(newUser);
         return MessageKeys.SUCCESS;
     }
-
-
 }
