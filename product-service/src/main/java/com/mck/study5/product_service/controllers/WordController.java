@@ -14,7 +14,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/products/words")
 @RequiredArgsConstructor
-public class WordController {
+public class  WordController {
     private final IWordService  wordService;
 
     @GetMapping("/search")

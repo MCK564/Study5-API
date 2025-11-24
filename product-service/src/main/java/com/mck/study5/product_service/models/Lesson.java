@@ -21,7 +21,7 @@ public class Lesson extends BaseEntity{
     private String thumbnail;
     private Long thumbnailId;
     private String video;
-    private String videoId;
+    private Long videoId;
     private String transcript;
 
     @OneToMany(mappedBy = "lesson", fetch = FetchType.LAZY)

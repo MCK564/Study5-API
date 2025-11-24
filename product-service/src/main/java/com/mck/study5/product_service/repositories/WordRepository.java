@@ -12,8 +12,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface WordRepository extends JpaRepository<Word,Long> {
 
-    @Query("SELECT w FROM Word w " +
-            "JOIN FlashCard fl WHERE 1=1 AND w.text LIKE %:keyword% " +
-            "AND fl.id = :flash_card_id")
-    Page<Word> findAll(@Param("keyword")String keyword, @Param("flash_card_id")Long flashCardId, Pageable pageable);
+    @Query("""
+        SELECT w FROM Word w
+        LEFT JOIN w.flashCard fl
+        WHERE (:keyword IS NULL OR LOWER(w.text) LIKE LOWER(CONCAT('%', :keyword, '%')))
+          AND fl.id = :flashCardId
+        """)
+    Page<Word> findAllByFlashCardAndKeyword(@Param("keyword") String keyword,
+                                            @Param("flashCardId") Long flashCardId,
+                                            Pageable pageable);
 }

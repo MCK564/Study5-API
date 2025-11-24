@@ -20,5 +20,5 @@ public interface ICourseService {
     CourseListResponse findBySubjectID(Long id);
     CourseDetailResponse getCourseDetailById(Long id);
     CourseListResponse getUnlockCourseByUserId(Long userId);
-
+    void updateCourseImage(Long courseId, String imageUrl, Long imageId);
 }

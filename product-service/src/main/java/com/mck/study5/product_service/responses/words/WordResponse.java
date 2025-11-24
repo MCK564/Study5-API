@@ -37,7 +37,7 @@ public class WordResponse {
                 .text(word.getText())
                 .phonetic(word.getPhonetic())
                 .typeOfText(word.getTypeOfText())
-                .AudioLink(word.getAudioLink())
+                .AudioLink(word.getAudio())
                 .definition(word.getDefinition())
                 .audioId(word.getAudioId())
                 .build();

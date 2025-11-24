@@ -23,13 +23,6 @@ public class KafkaTopicsConfig {
     }
 
 
-    @Bean
-    public NewTopic paymentSuccessUpdateCourseEnrollment(){
-        return TopicBuilder.name(Topics.PAYMENT_SUCCESS_SO_UPDATE_COURSE_ENROLLMENT)
-                .partitions(3)
-                .replicas(1)
-                .build();
-    }
 
 
 }

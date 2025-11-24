@@ -9,7 +9,7 @@ import java.util.Map;
 
 public interface IPaymentService {
     PaymentListResponse getAllPaymentsByUserId(Long userId);
-    String createPayment(PaymentRequest dto);
+    String createPayment(PaymentRequest dto, Long userId);
     void cancelPayment(Long paymentId);
     RedirectView handleVnPayReturn(Map<String, String> params);
 

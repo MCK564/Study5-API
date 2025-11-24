@@ -120,4 +120,12 @@ public class BlogService implements IBlogService{
         return response;
 
     }
+
+    @Override
+    public void updateBlogImage(Long blogId, String imageUrl, Long imageId) {
+        Blog blog = blogRepository.findById(blogId).orElseThrow(()-> new EntityNotFoundException("Blog not found"));
+        blog.setThumbnailId(imageId);
+        blog.setThumbnail(imageUrl);
+        blogRepository.save(blog);
+    }
 }

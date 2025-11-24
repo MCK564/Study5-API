@@ -22,7 +22,7 @@ public class WebSecurityConfig2 {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(reg -> reg
                         .requestMatchers(
-                                "/actuator/**")
+                                "/actuator/**","/payments/**")
                         .permitAll()
                         .anyRequest().authenticated()
                 )

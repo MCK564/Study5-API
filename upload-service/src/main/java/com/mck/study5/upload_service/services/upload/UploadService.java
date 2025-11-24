@@ -153,6 +153,8 @@ public class UploadService implements IUploadService {
                 builder.ownerType(MediaOwnerType.FLASHCARD.getType());
             } else if (belongToObject.startsWith("EXAM_")) {
                 builder.ownerType(MediaOwnerType.EXAM.getType());
+            } else if(belongToObject.startsWith("COURSE_")){
+                builder.ownerType(MediaOwnerType.COURSE.getType());
             }
         }
 

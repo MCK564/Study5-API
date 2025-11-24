@@ -109,5 +109,13 @@ public class LessonService implements ILessonService {
                     .build();
     }
 
+    @Override
+    public void updateLessonVideo(Long courseId, String videoUrl, Long videoId) {
+        Lesson existedLesson = lessonRepository.findById(courseId).get();
+        existedLesson.setVideo(videoUrl);
+        existedLesson.setVideoId(videoId);
+        lessonRepository.save(existedLesson);
+    }
+
 
 }

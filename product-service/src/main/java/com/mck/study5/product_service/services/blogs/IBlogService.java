@@ -18,4 +18,5 @@ public interface IBlogService {
     BlogCategoryListResponse getBlogCategories();
     BlogCategoryResponse createOrUpdateCategory(BlogCategoryDTO blogCategoryDTO);
     BlogCategoryResponse deleteCategory(Long id);
+    void updateBlogImage(Long blogId, String imageUrl, Long imageId);
 }

@@ -8,6 +8,7 @@ import com.mck.study5.payment_service.services.IPaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -28,14 +29,14 @@ public class PaymentController {
     }
 
 
-    @PostMapping("/")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    @PostMapping("")
     public ResponseEntity<ApiResponse<?>> createPayment(
-            @RequestHeader(value = "X-User-Id", required = true) String userId,
+            @RequestHeader(value = "X-User-Id", required = true) Long userId,
             @RequestHeader(value = "X-User-Role", required = true) String role,
             @RequestBody PaymentRequest dto
             ){
-        if(userId == null || role == null){return ResponseEntity.ok(ApiResponse.failure(null,401, MessageKeys.UNAUTHORIZED));}
-        return ResponseEntity.ok(ApiResponse.success(paymentService.createPayment(dto),200, MessageKeys.SUCCESS));}
+        return ResponseEntity.ok(ApiResponse.success(paymentService.createPayment(dto,userId),200, MessageKeys.SUCCESS));}
 
 
     @GetMapping("/vnpay_return")
@@ -47,12 +48,12 @@ public class PaymentController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @GetMapping("/history")
     public ResponseEntity<ApiResponse<?>> getAllPaymentsByUserId(
-            @RequestHeader(value = "X-User-Id", required = true) String userId,
+            @RequestHeader(value = "X-User-Id", required = true) Long userId,
             @RequestHeader(value = "X-User-Role", required = true) String role){
-        if(userId == null || role == null){return ResponseEntity.ok(ApiResponse.failure(null,401, MessageKeys.UNAUTHORIZED));}
-        return ResponseEntity.ok(ApiResponse.success(paymentService.getAllPaymentsByUserId(Long.valueOf(userId)),200, MessageKeys.SUCCESS));}
+        return ResponseEntity.ok(ApiResponse.success(paymentService.getAllPaymentsByUserId(userId),200, MessageKeys.SUCCESS));}
 
-//    admin/history
+
 }

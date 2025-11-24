@@ -20,7 +20,7 @@ public class LessonDetailResponse {
     private Long thumbnailId;
     private String video;
     @JsonProperty("video_id")
-    private String videoId;
+    private Long videoId;
     private String transcript;
 
     public static LessonDetailResponse fromLesson(Lesson lesson) {

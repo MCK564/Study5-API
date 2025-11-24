@@ -128,4 +128,14 @@ public class CourseService implements ICourseService{
                .build();
     }
 
+    @Override
+    public void updateCourseImage(Long courseId, String imageUrl, Long imageId) {
+        Course existedCourse = courseRepository.findById(courseId)
+                .orElseThrow(()->
+                        new DataNotFoundException(MessageKeys.DATA_NOT_FOUND+": no course with id = "+courseId));
+        existedCourse.setThumbnailId(imageId);
+        existedCourse.setThumbnailUrl(imageUrl);
+        courseRepository.save(existedCourse);
+    }
+
 }

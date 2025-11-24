@@ -19,10 +19,11 @@ public class Word extends BaseEntity{
     private String text;
     private String phonetic;
     private String typeOfText;
-    private String AudioLink;
+    private String audio;
     private String definition;
     private Long audioId;
-
+    private Long imageId;
+    private String imageUrl;
 
     @ManyToOne
     @JoinColumn(name="flashcard_id")

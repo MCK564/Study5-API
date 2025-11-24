@@ -21,4 +21,5 @@ public class PaymentResponse {
     private String bank;
     private LocalDateTime createdDate;
     private String createdBy;
+    private Long price;
 }

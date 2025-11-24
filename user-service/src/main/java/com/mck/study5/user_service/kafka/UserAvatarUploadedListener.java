@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class UserAvatarUploadedListener {
+
     private final UserRepository userRepository;
 
     @KafkaListener(

@@ -25,9 +25,9 @@ public class WordService implements IWordService{
 
     @Override
     public ListWordResponse findAllByConditions(int page, int limit, String keyword, Long flashCardId) {
-        PageRequest pageRequest = PageRequest.of(page,limit);
+        PageRequest pageRequest = PageRequest.of(page-1,limit);
         if(flashCardId!=null){
-            Page<Word> pages = wordRepository.findAll(keyword,flashCardId,pageRequest);
+            Page<Word> pages = wordRepository.findAllByFlashCardAndKeyword(keyword,flashCardId,pageRequest);
             List<WordResponse> responses = pages
                     .getContent()
                     .stream()

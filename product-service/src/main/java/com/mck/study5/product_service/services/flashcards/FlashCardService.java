@@ -8,7 +8,11 @@ import com.mck.study5.product_service.repositories.FlashCardRepository;
 import com.mck.study5.product_service.responses.flashcards.FlashCardListResponse;
 import com.mck.study5.product_service.responses.flashcards.FlashCardResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -18,7 +22,18 @@ public class FlashCardService implements IFlashCardService{
 
     @Override
     public FlashCardListResponse findAllByKeyword(String keyword, int page, int limit) {
-        return null;
+        PageRequest pageRequest = PageRequest.of(page-1,limit);
+        Page<FlashCard> pages = flashCardRepository.findAll(keyword,pageRequest);
+        List<FlashCardResponse> responses = pages.getContent()
+                .stream()
+                .map(FlashCardResponse::fromFlashCard)
+                .toList();
+        return FlashCardListResponse.builder()
+                .flashCards(responses)
+                .currentPage(pages.getNumber()+1)
+                .totalPages(pages.getTotalPages())
+                .quantity(responses.size())
+                .build();
     }
 
     @Override

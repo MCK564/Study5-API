@@ -9,18 +9,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Service;
 
 @Slf4j
-@ComponentScan
 @RequiredArgsConstructor
+@Service
 public class ProductUploadListener {
     private final WordRepository   wordRepository;
     private final FlashCardRepository flashCardRepository;
     private final CourseRepository courseRepository;
     private final LessonRepository lessonRepository;
     private final BlogRepository blogRepository;
-
-
 
 
     @KafkaListener(
@@ -79,7 +78,15 @@ public class ProductUploadListener {
                             log.info("Updated BLOG image: blogId={}, url={}", event.ownerId(), event.url());
                         });
             }
-
+            case "WORD" -> {
+                wordRepository.findById(event.ownerId())
+                        .ifPresent(word-> {
+                            word.setImageId(event.imageId());
+                            word.setImageUrl(event.url());
+                            wordRepository.save(word);
+                            log.info("Updated WORD image: wordId={}, url={}", event.ownerId(), event.url());
+                        });
+            }
             default -> log.info("Image uploaded for unsupported ownerType: {}", ownerType);
         }
     }
@@ -90,7 +97,7 @@ public class ProductUploadListener {
         if (ownerType.equals("WORD")) {
             wordRepository.findById(event.ownerId())
                     .ifPresent(word -> {
-                                word.setAudioLink(event.url());
+                                word.setAudio(event.url());
                                 word.setAudioId(event.imageId());
                                 wordRepository.save(word);
                                 log.info("Updated WORD audio: wordId={}, url={}", event.ownerId(), event.url());
@@ -113,7 +120,7 @@ public class ProductUploadListener {
     @KafkaListener(
             topics = Topics.MEDIA_DELETED,
             groupId = "product-service",
-            containerFactory = "mediaUploadedKafkaListenerContainerFactory"
+            containerFactory = "mediaDeletedEventKafkaListenerContainerFactory"
     )
     public void handleProductDeleted(MediaUploadedEvent event){
         log.info("Product uploaded message received: {}", event);

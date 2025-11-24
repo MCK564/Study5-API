@@ -13,4 +13,5 @@ public interface ILessonService {
     LessonDetailResponse createOrUpdateLesson(LessonDTO dto);
     void updateProgress(Long lessonId, Long userId);
     ListLessonResponse getAllLessonsByCourseId(Long courseId);
+    void updateLessonVideo(Long courseId, String videoUrl, Long videoId);
 }

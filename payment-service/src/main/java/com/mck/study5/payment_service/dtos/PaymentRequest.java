@@ -8,8 +8,10 @@ public class PaymentRequest {
 
     @JsonProperty("course_id")
     private Long courseId;
+
     private String email;
     private String phone;
+    private Long price;
     private String description;
 
 }

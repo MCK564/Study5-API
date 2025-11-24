@@ -1,12 +1,12 @@
 package com.mck.study5.product_service.config;
 
-
 import com.mck.study5.product_service.kafka.events.MediaDeletedEvent;
 import com.mck.study5.product_service.kafka.events.MediaUploadedEvent;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
@@ -16,13 +16,17 @@ import org.springframework.kafka.support.serializer.JsonDeserializer;
 import java.util.HashMap;
 import java.util.Map;
 
+@Configuration
 @EnableKafka
 public class KafkaConsumerConfig {
-    @Value("${spring.kafka.bootstrap.servers}")
+
+    @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
+    // ================= MEDIA UPLOADED =================
+
     @Bean
-    public ConsumerFactory<String, MediaUploadedEvent> mediaUploadedEventConsumerFactory(){
+    public ConsumerFactory<String, MediaUploadedEvent> mediaUploadedEventConsumerFactory() {
         JsonDeserializer<MediaUploadedEvent> deserializer =
                 new JsonDeserializer<>(MediaUploadedEvent.class);
         deserializer.addTrustedPackages("*");
@@ -37,18 +41,19 @@ public class KafkaConsumerConfig {
         return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), deserializer);
     }
 
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, MediaUploadedEvent> mediaUploadedEventKafkaListenerContainerFactory(){
+    // *** LƯU Ý: bean này MỚI là KafkaListenerContainerFactory ***
+    @Bean(name = "mediaUploadedKafkaListenerContainerFactory")
+    public ConcurrentKafkaListenerContainerFactory<String, MediaUploadedEvent> mediaUploadedKafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, MediaUploadedEvent> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(mediaUploadedEventConsumerFactory());
         return factory;
     }
 
-
+    // ================= MEDIA DELETED =================
 
     @Bean
-    public ConsumerFactory<String, MediaDeletedEvent> mediaDeletedEventConsumerFactory(){
+    public ConsumerFactory<String, MediaDeletedEvent> mediaDeletedEventConsumerFactory() {
         JsonDeserializer<MediaDeletedEvent> deserializer =
                 new JsonDeserializer<>(MediaDeletedEvent.class);
         deserializer.addTrustedPackages("*");
@@ -63,14 +68,11 @@ public class KafkaConsumerConfig {
         return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), deserializer);
     }
 
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, MediaDeletedEvent> mediaDeletedEventKafkaListenerContainerFactory(){
+    @Bean(name = "mediaDeletedEventKafkaListenerContainerFactory")
+    public ConcurrentKafkaListenerContainerFactory<String, MediaDeletedEvent> mediaDeletedEventKafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, MediaDeletedEvent> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(mediaDeletedEventConsumerFactory());
         return factory;
     }
-
-
-
 }

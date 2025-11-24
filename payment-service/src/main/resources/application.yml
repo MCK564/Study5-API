@@ -19,7 +19,7 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
   properties:
     hibernate:
       dialect: org.hibernate.dialect.MySQLDialect
@@ -43,8 +43,8 @@ spring:
         spring.json.trusted.packages: "com.mck.study5.*"
 
 vnpay:
-  tmn_code: NQEXRUA7
-  hash_secret: VO80JER5TMM37D05B0CVP1G6TG48CEKI
+  tmn_code: ZMF8PTU6
+  hash_secret: FJ6GBQXIAHJ0EH1P7ZTJ7GI2YYJMH4KL
   url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
   return_url: http://localhost:8090/payments/vnpay_return
   return_client_url: http://localhost:5173/new-post?payment-status=

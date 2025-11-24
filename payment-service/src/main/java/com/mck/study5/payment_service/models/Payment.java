@@ -17,6 +17,7 @@ public class Payment extends BaseEntity{
     private String email;
     private Long courseId;
     private String description;
-    private PaymentStatus paymentStatus;
+    private String paymentStatus;
     private String bank;
+    private Long price;
 }
