@@ -1,6 +1,7 @@
 package com.mck.study5.payment_service.controllers;
 
 
+import com.mck.study5.payment_service.clients.CourseClient;
 import com.mck.study5.payment_service.constants.MessageKeys;
 import com.mck.study5.payment_service.dtos.PaymentRequest;
 import com.mck.study5.payment_service.response.ApiResponse;
@@ -18,6 +19,7 @@ import java.util.Map;
 @RequestMapping("/payments")
 @RequiredArgsConstructor
 public class PaymentController {
+    private final CourseClient courseClient;
     private final IPaymentService paymentService;
 
     @Value("${vnpay.return_client_url}")
@@ -36,23 +38,23 @@ public class PaymentController {
             @RequestHeader(value = "X-User-Role", required = true) String role,
             @RequestBody PaymentRequest dto
             ){
-        return ResponseEntity.ok(ApiResponse.success(paymentService.createPayment(dto,userId),200, MessageKeys.SUCCESS));}
+        return ResponseEntity.ok(ApiResponse.success(paymentService.createPaymentUrlByPayOs(dto,userId),200, MessageKeys.SUCCESS));
+    }
 
 
-    @GetMapping("/vnpay_return")
+    @GetMapping("payos_return")
     public RedirectView handleVNPayReturn(@RequestParam Map<String,String> params){
         try{
-            return paymentService.handleVnPayReturn(params);
+            return paymentService.handlePayPalReturn(params);
         }catch(Exception e){
-            return new RedirectView(returnClientUrl+"failed");
+            return new RedirectView(returnClientUrl+MessageKeys.FAILURE);
         }
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @GetMapping("/history")
     public ResponseEntity<ApiResponse<?>> getAllPaymentsByUserId(
-            @RequestHeader(value = "X-User-Id", required = true) Long userId,
-            @RequestHeader(value = "X-User-Role", required = true) String role){
+            @RequestHeader(value = "X-User-Id", required = true) Long userId){
         return ResponseEntity.ok(ApiResponse.success(paymentService.getAllPaymentsByUserId(userId),200, MessageKeys.SUCCESS));}
 
 

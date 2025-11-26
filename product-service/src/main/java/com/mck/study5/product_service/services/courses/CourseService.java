@@ -138,4 +138,9 @@ public class CourseService implements ICourseService{
         courseRepository.save(existedCourse);
     }
 
+    @Override
+    public Boolean checkIfUnlock(Long userId, Long courseId) {
+       return courseEnrollmentRepository.existsByUserIdAndCourse_Id(userId, courseId);
+    }
+
 }

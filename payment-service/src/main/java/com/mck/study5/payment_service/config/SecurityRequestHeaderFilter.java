@@ -25,7 +25,9 @@ public class SecurityRequestHeaderFilter extends OncePerRequestFilter {
 
 
         if (path.startsWith("/actuator")
-                || "/payments/ping".equals(path)) {
+                || "/payments/ping".equals(path)
+        || "/payments/payos_return".equals(path)
+        ) {
             filterChain.doFilter(request, response);
             return;
         }

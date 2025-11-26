@@ -27,7 +27,7 @@ public class MailService {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
 
-            helper.setText(body);
+            helper.setText(body,true);
             helper.setFrom(mailFrom);
             helper.setTo(toEmail);
             helper.setSubject(subject);

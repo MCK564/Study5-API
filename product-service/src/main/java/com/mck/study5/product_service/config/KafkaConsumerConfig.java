@@ -2,6 +2,7 @@ package com.mck.study5.product_service.config;
 
 import com.mck.study5.product_service.kafka.events.MediaDeletedEvent;
 import com.mck.study5.product_service.kafka.events.MediaUploadedEvent;
+import com.mck.study5.product_service.kafka.events.PaymentSuccessMessageEvent;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -73,6 +74,33 @@ public class KafkaConsumerConfig {
         ConcurrentKafkaListenerContainerFactory<String, MediaDeletedEvent> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(mediaDeletedEventConsumerFactory());
+        return factory;
+    }
+
+
+    @Bean
+    public ConsumerFactory<String, PaymentSuccessMessageEvent> sendingPaymentSuccessMessageEventConsumerFactory() {
+        JsonDeserializer<PaymentSuccessMessageEvent> deserializer =
+                new JsonDeserializer<>(PaymentSuccessMessageEvent.class);
+        deserializer.addTrustedPackages("*");
+        deserializer.setUseTypeHeaders(false);
+
+        Map<String, Object> props = new HashMap<>();
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, "product-service");
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+
+        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), deserializer);
+    }
+
+    // *** LƯU Ý: bean này MỚI là KafkaListenerContainerFactory ***
+    @Bean(name = "sendingMessageKafkaListenerContainerFactory")
+    public ConcurrentKafkaListenerContainerFactory<String, PaymentSuccessMessageEvent> sendingMessageKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, PaymentSuccessMessageEvent> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(sendingPaymentSuccessMessageEventConsumerFactory());
         return factory;
     }
 }

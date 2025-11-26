@@ -29,5 +29,6 @@ public class MessageKeys {
     public static final String SUBJECT_NOT_FOUND = "SUBJECT_NOT_FOUND";
     public static final String INVALID_JWT_SIGNATURE = "INVALID_JWT_SIGNATURE";
     public static final String SERVICE_UNAVAILABLE = "Service temporarily unavailable. Please try again later";
+    public static final String COURSE_ALREADY_PURCHASED_BY_THIS_USER = "Course already purchased by this user";
 
 }

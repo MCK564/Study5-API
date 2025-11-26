@@ -15,4 +15,6 @@ public class Topics {
     public static final String PRODUCT_LESSON_AVATAR_UPLOADED = "product.lesson.avatar.uploaded";
     public static final String MEDIA_UPLOADED = "media.uploaded";
     public static final String MEDIA_DELETED = "media.deleted";
+    public static final String NOTIFICATION_PAYMENT_SUCCESS = "notification.payment.success";
+
 }

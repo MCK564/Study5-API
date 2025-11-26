@@ -48,3 +48,13 @@ vnpay:
   url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
   return_url: http://localhost:8090/payments/vnpay_return
   return_client_url: http://localhost:5173/new-post?payment-status=
+
+
+payos:
+  client-id: 6b38e2e8-ebce-4c62-9d30-b4cee05d55d3
+  api-key: 28b3b80b-e744-4b43-9fd7-44d2037f37a1
+  checksum-key: e9751596783a2b0109d96e8aa5539b28e1775eb60061abc881c29be2c09da957
+  base-url: https://api-merchant.payos.vn
+  return-url: http://localhost:8090/payments/payos_return
+  return-client-url: http://localhost:5173/new-post?payment-status=
+  cancel-url: https://api-merchant.payos.vn/v2/payment-requests/{id}/cancel

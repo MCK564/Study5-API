@@ -58,4 +58,10 @@ public class CourseController {
         return ResponseEntity.ok(ApiResponse.success(courseService.getUnlockCourseByUserId(userId), 200, MessageKeys.SUCCESS));
     }
 
+    @GetMapping("/check")
+    public Boolean checkCourseUnlock(@RequestParam Long userId,
+                                     @RequestParam Long courseId){
+        return courseService.checkIfUnlock(userId,courseId);
+    }
+
 }
