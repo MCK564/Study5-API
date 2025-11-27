@@ -96,10 +96,10 @@ public class PaymentService implements IPaymentService {
 
     @Override
     public String createPaymentUrlByPayOs(PaymentRequest dto, Long userId) {
-        Boolean unlocked = courseClient.checkCourseUnlock(userId, dto.getCourseId());
-        if (Boolean.TRUE.equals(unlocked)) {
-            throw new CourseAlreadyPurchaseException("Course already purchased / unlocked.");
-        }
+//        Boolean unlocked = courseClient.checkCourseUnlock(userId, dto.getCourseId());
+//        if (Boolean.TRUE.equals(unlocked)) {
+//            throw new CourseAlreadyPurchaseException("Course already purchased / unlocked.");
+//        }
         Payment newPayment = Payment.builder()
                 .courseId(dto.getCourseId())
                 .price(dto.getPrice())

@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.web.access.AuthorizationManagerWebInvocationPrivilegeEvaluator;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Map;
@@ -33,7 +34,7 @@ public class AuthController {
     private final OAuthAuthorizeService oAuthAuthorizeService;
     private final ExternalOAuthService externalOAuthService;
 
-    @Value("${redirect-after")
+    @Value(value = "${redirect-after")
     private String redirectAfter;
 
     @PostMapping("/oauth2/success")
@@ -69,20 +70,16 @@ public class AuthController {
 
 
     @GetMapping("/oauth2/callback/google")
-    public ResponseEntity<?> callbackGoogle(
+    public RedirectView callbackGoogle(
             @RequestParam String code,
             @RequestParam String state){
+        UserLoginResponse userLoginResponse = externalOAuthService.exchangeGoogleCode(code);
+        StringBuilder strb = new StringBuilder("http://localhost:5173");
+        strb.append("?login=").append(MessageKeys.SUCCESS);
+        strb.append("&access_token=").append(userLoginResponse.getAccessToken());
+        strb.append("&refresh_token=").append(userLoginResponse.getRefreshToken());
 
-//        UserLoginResponse userLoginResponse = externalOAuthService.exchangeGoogleCode(code);
-//        String redirectUrl = UriComponentsBuilder.fromUriString(redirectAfter)
-//                .queryParam("accessToken", userLoginResponse.getAccessToken())
-//                .queryParam("refreshToken", userLoginResponse.getRefreshToken())
-//                .build().toUriString();
-//        return ResponseEntity.status(302)
-//                .header("Location", redirectUrl)
-//                .build();
-
-        return ResponseEntity.ok(externalOAuthService.exchangeGoogleCode(code));
+       return new RedirectView(strb.toString());
     }
 
     @GetMapping("/oauth2/callback/facebook/{provider}")

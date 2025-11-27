@@ -18,4 +18,6 @@ public class UserLoginResponse {
 
     @JsonProperty("refresh_token")
     private String refreshToken;
+
+    private String role;
 }

@@ -58,7 +58,7 @@ spring:
     topics:
       user-created: user.created
 
-redirect-after: http://localhost:3000/oauth2/success
+redirect-after: http://localhost:5173
 
 app:
   kafka:

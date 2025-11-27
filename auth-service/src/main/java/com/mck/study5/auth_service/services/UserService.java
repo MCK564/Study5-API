@@ -39,6 +39,7 @@ public class UserService implements IUserService {
                 .message(MessageKeys.LOGIN_SUCCESS)
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .role(existedUser.getRole())
                 .build();
     }
 
