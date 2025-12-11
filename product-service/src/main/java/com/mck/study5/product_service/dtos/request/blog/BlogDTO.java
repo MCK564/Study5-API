@@ -14,6 +14,7 @@ public class BlogDTO {
     private String title;
     private String subtitle;
     private String content;
+    private Long views;
     private String writer;
     private String keywords;
     @JsonProperty("category_id")

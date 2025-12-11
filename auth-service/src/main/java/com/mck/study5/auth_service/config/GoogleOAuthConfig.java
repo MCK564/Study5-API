@@ -7,6 +7,7 @@ import com.mck.study5.auth_service.props.FacebookProps;
 import com.mck.study5.auth_service.props.GoogleProps;
 import lombok.Getter;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
@@ -15,6 +16,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;
 
+@Profile("!test")
 @Component
 @Getter
 public class GoogleOAuthConfig {

@@ -61,5 +61,4 @@ public class LessonController {
         return ResponseEntity.ok(ApiResponse.success(lessonService
                 .getAllLessonsByCourseId(courseId),200, MessageKeys.SUCCESS));
     }
-
 }

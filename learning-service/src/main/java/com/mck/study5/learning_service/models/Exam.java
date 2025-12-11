@@ -25,6 +25,8 @@ public class Exam extends BaseEntity{
     private Integer numberOfQuestion;
     private String thumbnailUrl;
     private Long thumbnailId;
+    private Long audioId;
+    private String audioUrl;
     private String term;
 
     @OneToMany(mappedBy = "exam", fetch = FetchType.LAZY)

@@ -42,7 +42,7 @@ public class ExamController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
-    public ResponseEntity<ApiResponse<?>> getExam(@RequestParam(value="id") Long id){
+    public ResponseEntity<ApiResponse<?>> getExam(@PathVariable Long id){
        return ResponseEntity.ok(ApiResponse.success(examService.findById(id),200,null));
     }
 

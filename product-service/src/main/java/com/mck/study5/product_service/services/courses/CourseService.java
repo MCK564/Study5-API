@@ -20,6 +20,8 @@ import com.mck.study5.product_service.responses.lessons.ListLessonResponse;
 import com.mck.study5.product_service.responses.subject.SubjectResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.catalina.User;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -44,6 +46,7 @@ public class CourseService implements ICourseService{
     }
 
     @Override
+    @CacheEvict(value = {"redisCourseSearch","redisCourseDetail","redisUnlockCourses"}, allEntries = true)
     public CourseResponse createOrUpdate(CourseDTO courseDTO) {
         Course course = converter.fromCourseDTO(courseDTO);
         Subject existedSubject = subjectRepository.findById(courseDTO.getSubjectId()).orElseThrow(()->
@@ -54,6 +57,7 @@ public class CourseService implements ICourseService{
     }
 
     @Override
+    @CacheEvict(value = {"redisCourseSearch","redisCourseDetail","redisUnlockCourses"}, allEntries = true)
     public CourseResponse deleteCourseById(Long id) {
         Course existingCourse  = courseRepository
                 .findById(id)
@@ -72,6 +76,7 @@ public class CourseService implements ICourseService{
     }
 
     @Override
+    @Cacheable(value = "redisCourseSearch", key = "#keyword+'_'+#page+'_'+#size")
     public CourseListResponse findAllByConditions(int page, int size, String keyword) {
         PageRequest pageRequest = PageRequest.of(page-1,size);
         Page<Course> pages = courseRepository.findAll(keyword, pageRequest);
@@ -100,6 +105,7 @@ public class CourseService implements ICourseService{
     }
 
     @Override
+    @Cacheable(value="redisCourseDetail", key = "#id")
     public CourseDetailResponse getCourseDetailById(Long id) {
         Course existingCourse = courseRepository.findById(id)
                 .orElseThrow(()-> new DataNotFoundException(MessageKeys.DATA_NOT_FOUND));
@@ -116,10 +122,12 @@ public class CourseService implements ICourseService{
     }
 
     @Override
+    @Cacheable(value = "redisUnlockCourses", key = "#userId")
     public CourseListResponse getUnlockCourseByUserId(Long userId) {
        List<CourseResponse> courses =  courseEnrollmentRepository
                .findAllByUserId(userId).stream()
                .map(CourseEnrollment::getCourse)
+               .distinct()
                .map(Course::toResponse)
                .toList();
 
@@ -141,6 +149,16 @@ public class CourseService implements ICourseService{
     @Override
     public Boolean checkIfUnlock(Long userId, Long courseId) {
        return courseEnrollmentRepository.existsByUserIdAndCourse_Id(userId, courseId);
+    }
+
+    @Override
+    @CacheEvict(value = {"redisCourseSearch","redisCourseDetail","redisUnlockCourses"}, allEntries = true)
+    public void evictCourseCache(Long id) {
+    }
+
+    @Override
+    @CacheEvict(value = {"redisUnlockCourses"}, key = "#userId")
+    public void evictUnlockCourseCache(Long userId) {
     }
 
 }

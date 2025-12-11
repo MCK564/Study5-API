@@ -20,6 +20,7 @@ public class UserDetailResponse {
     private String address;
     private String phone;
 
+
     public static UserDetailResponse fromUser(User user) {
         return UserDetailResponse
                 .builder()

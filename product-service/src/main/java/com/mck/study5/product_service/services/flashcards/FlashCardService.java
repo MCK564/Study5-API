@@ -8,6 +8,10 @@ import com.mck.study5.product_service.repositories.FlashCardRepository;
 import com.mck.study5.product_service.responses.flashcards.FlashCardListResponse;
 import com.mck.study5.product_service.responses.flashcards.FlashCardResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -21,6 +25,7 @@ public class FlashCardService implements IFlashCardService{
     private final Converter converter;
 
     @Override
+    @Cacheable(value = "redisFlashCards", key = "#keyword+'_' +#page + '_'+ #limit")
     public FlashCardListResponse findAllByKeyword(String keyword, int page, int limit) {
         PageRequest pageRequest = PageRequest.of(page-1,limit);
         Page<FlashCard> pages = flashCardRepository.findAll(keyword,pageRequest);
@@ -37,12 +42,21 @@ public class FlashCardService implements IFlashCardService{
     }
 
     @Override
+    @Caching(
+            evict = {
+                    @CacheEvict(value  = {"redisFlashCards","redisFlashCard"} , allEntries = true),
+            },
+            put = {
+                    @CachePut(value = "redisFlashCard", key = "#dto.id", condition = "#dto.id != null")
+            }
+    )
     public FlashCardResponse createOrUpdate(FlashCardDTO dto) {
         FlashCard flashCard = converter.fromFlashCardDTO(dto);
         return FlashCardResponse.fromFlashCard(flashCardRepository.save(flashCard));
     }
 
     @Override
+    @CacheEvict(value = {"redisFlashCards","redisFlashCard"}, allEntries = true)
     public FlashCardResponse deleteById(Long id) {
        if(flashCardRepository.existsById(id)){
            FlashCardResponse response = FlashCardResponse.fromFlashCard(flashCardRepository.findById(id).get());
@@ -66,6 +80,11 @@ public class FlashCardService implements IFlashCardService{
         flashCard.setThumbnailUrl(null);
         flashCard.setThumbnailUrl(null);
         flashCardRepository.save(flashCard);
+    }
+
+    @Override
+    @CacheEvict(value = {"redisFlashCards","redisFlashCard"}, allEntries = true)
+    public void evictFlashCardCache(Long id) {
     }
 
 }

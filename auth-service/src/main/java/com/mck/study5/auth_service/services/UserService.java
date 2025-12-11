@@ -5,6 +5,7 @@ import com.mck.study5.auth_service.constants.MessageKeys;
 import com.mck.study5.auth_service.dto.LoginRequestDTO;
 import com.mck.study5.auth_service.dto.RegisterRequestDTO;
 import com.mck.study5.auth_service.exceptions.InvalidDataException;
+import com.mck.study5.auth_service.models.LOGIN_TYPE;
 import com.mck.study5.auth_service.models.ROLE;
 import com.mck.study5.auth_service.models.User;
 import com.mck.study5.auth_service.repositories.UserRepository;
@@ -57,8 +58,11 @@ public class UserService implements IUserService {
 
         User newUser = User.builder()
                 .username(dto.getUsername())
-                .password(dto.getPassword())
+                .password(passwordEncoder.encode(dto.getPassword()))
                 .role(ROLE.USER.getRole())
+                .displayName(dto.getDisplayName())
+                .email(dto.getEmail())
+                .loginType(LOGIN_TYPE.LOCAL.getType())
                 .build();
 
         userRepository.save(newUser);

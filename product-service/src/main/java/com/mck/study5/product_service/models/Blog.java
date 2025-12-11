@@ -24,7 +24,7 @@ public class Blog extends BaseEntity{
     @Column(columnDefinition = "LONGTEXT") // MySQL: TEXT / MEDIUMTEXT / LONGTEXT
     private String content;
     private String writer;
-    private Long views;
+    private Long views= 0L;
     private String thumbnail;
     private Long thumbnailId;
 
@@ -44,15 +44,6 @@ public class Blog extends BaseEntity{
                 .writer(blog.getWriter())
                 .keyword(blog.getKeywords())
                 .views(blog.getViews())
-                .build();
-    }
-
-    public static Blog fromDTO(BlogDTO blogDTO)   {
-        return Blog.builder()
-                .title(blogDTO.getTitle())
-                .subtitle(blogDTO.getSubtitle())
-                .content(blogDTO.getContent())
-                .writer(blogDTO.getWriter())
                 .build();
     }
 }

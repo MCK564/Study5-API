@@ -16,6 +16,9 @@ import com.mck.study5.payment_service.models.PaymentStatus;
 import com.mck.study5.payment_service.repositories.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -33,7 +36,7 @@ public class PaymentService implements IPaymentService {
     private final PayOSService payOSService;
     private final CourseClient  courseClient;
 
-    @Value("${vnpay.return_client_url}")
+    @Value("${payos.return-client-url}")
     private String returnClientUrl;
 
     @Override
@@ -86,6 +89,7 @@ public class PaymentService implements IPaymentService {
                     .userId(existingPayment.getUserId())
                     .createdDate(existingPayment.getCreatedDate().toString())
                     .description(existingPayment.getDescription())
+                    .amount(existingPayment.getPrice())
                     .build();
 
             kafkaProducer.publishPaymentSuccessMessage(event);
@@ -145,6 +149,22 @@ public class PaymentService implements IPaymentService {
            paymentRepository.deleteById(existedPayment.getId());
        }
         return new RedirectView(urlReturn.toString());
+    }
+
+    @Override
+    public PaymentListResponse adminSearchPayment(Long userId, Long courseId, Integer page, Integer size) {
+        PageRequest pageRequest = PageRequest.of(page-1, size, Sort.by(Sort.Direction.DESC, "createdDate"));
+        Page<Payment> pages = paymentRepository.adminSearchPayments(userId, courseId, pageRequest);
+        List<PaymentResponse> responses = pages.getContent()
+                .stream()
+                .map(PaymentResponse::fromPayment)
+                .toList();
+
+        return PaymentListResponse.builder()
+                .payments(responses)
+                .totalPages(pages.getTotalPages())
+                .currentPage(page)
+                .build();
     }
 
 

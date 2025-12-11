@@ -1,12 +1,14 @@
 package com.mck.study5.learning_service.services.exams;
 
 import com.mck.study5.learning_service.converter.Converter;
+import com.mck.study5.learning_service.dto.request.exam.ExamCategoryDTO;
 import com.mck.study5.learning_service.dto.request.exam.ExamDTO;
 import com.mck.study5.learning_service.dto.response.exams.ExamCategoryResponse;
 import com.mck.study5.learning_service.dto.response.exams.ExamListResponse;
 import com.mck.study5.learning_service.dto.response.exams.ExamResponse;
 import com.mck.study5.learning_service.dto.response.exams.ListExamCategoryResponse;
 import com.mck.study5.learning_service.models.Exam;
+import com.mck.study5.learning_service.models.ExamCategory;
 import com.mck.study5.learning_service.repository.ExamCategoryRepository;
 import com.mck.study5.learning_service.repository.ExamRepository;
 import lombok.RequiredArgsConstructor;
@@ -65,6 +67,7 @@ public class ExamService implements IExamService{
         exam.setCategory(examCategoryRepository
                 .findById(dto.getExamCategoryId())
                 .orElseThrow(()->new RuntimeException("ExamCategory not found: id="+dto.getExamCategoryId())));
+
         return ExamResponse.from(examRepository.save(exam));
     }
 
@@ -84,5 +87,20 @@ public class ExamService implements IExamService{
         existedExam.setThumbnailId(thumbnailId);
         existedExam.setThumbnailUrl(thumbnail);
         examRepository.save(existedExam);
+    }
+
+    @Override
+    public ExamCategoryResponse createOrUpdateExamCategory(ExamCategoryDTO dto) {
+        ExamCategory examCategory = converter.fromExamCategoryDTO(dto);
+        return ExamCategoryResponse.from(examCategoryRepository.save(examCategory));
+    }
+
+    @Override
+    public ExamCategoryResponse deleteById(Long id) {
+        if(examCategoryRepository.existsById(id)){
+            examCategoryRepository.deleteById(id);
+            return ExamCategoryResponse.builder().id(id).build();
+        }
+        return null;
     }
 }

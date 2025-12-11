@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
@@ -14,6 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @ComponentScan
 @EnableAutoConfiguration
 @RequiredArgsConstructor
+@EnableMethodSecurity
 public class WebSecurityConfig2 {
     private final SecurityRequestHeaderFilter securityRequestHeaderFilter;
 
@@ -22,7 +24,8 @@ public class WebSecurityConfig2 {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(reg -> reg
                         .requestMatchers(
-                                "/actuator/**","/payments/**")
+                                "/actuator/**",
+                                "/payments/**")
                         .permitAll()
                         .anyRequest().authenticated()
                 )

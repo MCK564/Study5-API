@@ -1,6 +1,7 @@
 package com.mck.study5.learning_service.dto.response.questions;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,5 +17,9 @@ import java.util.List;
 @Builder
 public class QuestionListResponse {
     private Integer quantity;
+
+    @JsonProperty("audio_url")
+    private String audioUrl;
+
     private List<QuestionResponse> responses =new ArrayList<>();
 }

@@ -16,6 +16,10 @@ import com.mck.study5.product_service.responses.lessons.LessonResponse;
 import com.mck.study5.product_service.responses.lessons.ListLessonDetailResponse;
 import com.mck.study5.product_service.responses.lessons.ListLessonResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,6 +44,7 @@ public class LessonService implements ILessonService {
     }
 
     @Override
+    @Cacheable(value = "redisLessonDetails", key = "#courseId+'_'+#userId")
     public ListLessonDetailResponse getListLessonByCourseId(Long courseId, Long userId) {
         if(courseEnrollmentRepository.existsByUserIdAndCourse_Id(userId, courseId)){
             List<LessonDetailResponse> responses = lessonRepository
@@ -58,6 +63,7 @@ public class LessonService implements ILessonService {
     }
 
     @Override
+    @CacheEvict(value = {"redisLessonDetail","redisLessonDetails",}, allEntries = true)
     public LessonResponse deleteLessonById(Long id) {
         if(lessonRepository.existsById(id)){
             LessonResponse response = LessonResponse.fromLesson(lessonRepository.findById(id).get());
@@ -71,6 +77,14 @@ public class LessonService implements ILessonService {
     }
 
     @Override
+    @Caching(
+            evict = {
+                    @CacheEvict(value = {"redisLessonDetail","redisLessonDetails",}, allEntries = true)
+            },
+            put = {
+                    @CachePut(value="redisLessonDetail",key="#dto.id",condition="#dto.id != null")
+            }
+    )
     public LessonDetailResponse createOrUpdateLesson(LessonDTO dto) {
         Lesson newLesson = converter.fromLessonDTO(dto);
         newLesson.setCourse(courseRepository.findById(dto.getCourseId()).get());
@@ -98,6 +112,7 @@ public class LessonService implements ILessonService {
     }
 
     @Override
+    @Cacheable(value = "redisLessonDetails", key = "#courseId")
     public ListLessonResponse getAllLessonsByCourseId(Long courseId) {
             List<LessonResponse> response = lessonRepository.findAllByCourse_Id(courseId)
                     .stream()
@@ -115,6 +130,11 @@ public class LessonService implements ILessonService {
         existedLesson.setVideo(videoUrl);
         existedLesson.setVideoId(videoId);
         lessonRepository.save(existedLesson);
+    }
+
+    @Override
+    @CacheEvict(value = {"redisLessonDetail","redisLessonDetails",}, allEntries = true)
+    public void evictLessonCache(Long id) {
     }
 
 

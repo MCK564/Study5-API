@@ -1,6 +1,7 @@
 package com.mck.study5.learning_service.converter;
 
 
+import com.mck.study5.learning_service.dto.request.exam.ExamCategoryDTO;
 import com.mck.study5.learning_service.dto.request.exam.ExamDTO;
 import com.mck.study5.learning_service.dto.request.question.QuestionCreateOrUpdateDTO;
 import com.mck.study5.learning_service.models.Exam;
@@ -15,11 +16,12 @@ import org.springframework.stereotype.Component;
 public class Converter {
     private final ModelMapper modelMapper;
 
-    public ExamCategory fromExamCategoryDTO(ExamCategory dto){
+    public ExamCategory fromExamCategoryDTO(ExamCategoryDTO dto){
         return modelMapper.map(dto, ExamCategory.class);
     }
     public Exam fromExamDTO(ExamDTO dto){
         return modelMapper.map(dto, Exam.class);
     }
     public Question fromQuestionDTO(QuestionCreateOrUpdateDTO dto){return modelMapper.map(dto, Question.class);}
+
 }

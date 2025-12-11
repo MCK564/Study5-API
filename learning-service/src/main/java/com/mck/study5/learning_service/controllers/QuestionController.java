@@ -11,7 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/products/questions")
+@RequestMapping("/learning/questions")
 @RequiredArgsConstructor
 public class QuestionController {
     private final IQuestionService questionService;

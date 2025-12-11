@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Getter
 @ToString
-@Component
+//@Component
 public class GoogleProps {
     private final String clientId;
     private final String clientSecret;

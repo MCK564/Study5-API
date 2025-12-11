@@ -19,6 +19,7 @@ import java.util.Map;
 @EnableKafka
 @Configuration
 public class KafkaConsumerConfig {
+
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
@@ -27,6 +28,7 @@ public class KafkaConsumerConfig {
         JsonDeserializer<MediaUploadedEvent> deserializer =
                 new JsonDeserializer<>(MediaUploadedEvent.class);
         deserializer.addTrustedPackages("*");
+        deserializer.setUseTypeHeaders(false);
 
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -39,7 +41,7 @@ public class KafkaConsumerConfig {
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, MediaUploadedEvent> mediaUploadedEventKafkaListenerContainerFactory(){
+    public ConcurrentKafkaListenerContainerFactory<String, MediaUploadedEvent> mediaUploadedKafkaListenerContainerFactory(){
         ConcurrentKafkaListenerContainerFactory<String, MediaUploadedEvent> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(mediaUploadedEventConsumerFactory());

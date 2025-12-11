@@ -58,4 +58,17 @@ public class PaymentController {
         return ResponseEntity.ok(ApiResponse.success(paymentService.getAllPaymentsByUserId(userId),200, MessageKeys.SUCCESS));}
 
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @GetMapping("/admin/search")
+    public ResponseEntity<ApiResponse<?>> adminSearchPayments(
+            @RequestParam(value = "courseId", required = false) Long courseId,
+            @RequestParam(value = "userId", required = false) Long userId,
+            @RequestParam(value = "success", required = false) Boolean success,
+            @RequestParam(value= "page", defaultValue = "1") Integer page,
+            @RequestParam(value= "size", defaultValue = "10") Integer size
+    ){
+        return ResponseEntity.ok(ApiResponse.success(paymentService.adminSearchPayment(userId,courseId,page,size),200, MessageKeys.SUCCESS));
+    }
+
+
 }

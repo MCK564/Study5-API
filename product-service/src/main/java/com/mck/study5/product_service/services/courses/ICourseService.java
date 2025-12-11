@@ -22,4 +22,6 @@ public interface ICourseService {
     CourseListResponse getUnlockCourseByUserId(Long userId);
     void updateCourseImage(Long courseId, String imageUrl, Long imageId);
     Boolean checkIfUnlock(Long userId, Long courseId);
+    void evictCourseCache(Long id);
+    void evictUnlockCourseCache(Long userId);
 }

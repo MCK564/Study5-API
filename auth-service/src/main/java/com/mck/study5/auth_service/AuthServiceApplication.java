@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication(scanBasePackages = "com.mck.study5")
 @EntityScan(basePackages = "com.mck.study5.auth_service.models")
-@EnableJpaRepositories(basePackages = "com.mck.study5.auth_service.repositories")
+//@EnableJpaRepositories(basePackages = "com.mck.study5.auth_service.repositories")
 public class AuthServiceApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(AuthServiceApplication.class, args);

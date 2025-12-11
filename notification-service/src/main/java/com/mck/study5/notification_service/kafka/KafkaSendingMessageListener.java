@@ -172,7 +172,7 @@ public class KafkaSendingMessageListener {
 
     <div class="table-wrapper">
         <table class="course-table">
-            <thead><tr><th>Khóa học</th><th align="right">Giá</th></tr></thead>
+            <thead><tr><th>Khóa học </th><th align="right">Giá</th></tr></thead>
             <tbody>
                 <tr><td>%s</td><td align="right">%s</td></tr>
             </tbody>
@@ -210,9 +210,9 @@ public class KafkaSendingMessageListener {
                 event.email(),
                 event.createdDate(),
                 "PayOS",
-                "Purchased Course",
-                event.courseId(),
-                event.courseId(),
+                "ID Khóa học: "+ event.courseId(),
+               event.amount()+" VND",
+                event.amount()+" VND",
                 "http://localhost:5173/courses/" + event.courseId(),
                 java.time.Year.now().getValue()
         );

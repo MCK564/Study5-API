@@ -5,6 +5,12 @@ import com.mck.study5.product_service.constants.Topics;
 
 import com.mck.study5.product_service.kafka.events.MediaUploadedEvent;
 import com.mck.study5.product_service.repositories.*;
+import com.mck.study5.product_service.services.blogs.IBlogService;
+import com.mck.study5.product_service.services.courses.ICourseService;
+import com.mck.study5.product_service.services.flashcards.IFlashCardService;
+import com.mck.study5.product_service.services.lesson.ILessonService;
+import com.mck.study5.product_service.services.word.IWordService;
+import com.mck.study5.product_service.services.word.WordService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.ComponentScan;
@@ -20,6 +26,11 @@ public class ProductUploadListener {
     private final CourseRepository courseRepository;
     private final LessonRepository lessonRepository;
     private final BlogRepository blogRepository;
+    private final IWordService wordService;
+    private final IFlashCardService flashCardService;
+    private final ICourseService courseService;
+    private final ILessonService lessonService;
+    private final IBlogService blogService;
 
 
     @KafkaListener(
@@ -53,6 +64,7 @@ public class ProductUploadListener {
                             flashcard.setThumbnailUrl(event.url());
                             flashcard.setThumbnailId(event.imageId());
                             flashCardRepository.save(flashcard);
+                            flashCardService.evictFlashCardCache(event.ownerId());
                             log.info("Updated FLASHCARD image: flashcardId={}, url={}", event.ownerId(), event.url());
                         });
             }
@@ -65,6 +77,7 @@ public class ProductUploadListener {
                             course.setThumbnailUrl(event.url());
                             course.setThumbnailId(event.imageId());
                             courseRepository.save(course);
+                            courseService.evictCourseCache(event.ownerId());
                             log.info("Updated COURSE image: courseId={}, url={}", event.ownerId(), event.url());
                         });
             }
@@ -75,6 +88,7 @@ public class ProductUploadListener {
                             blog.setThumbnail(event.url());
                             blog.setThumbnailId(event.imageId());
                             blogRepository.save(blog);
+                            blogService.evictBlogCache(event.ownerId());
                             log.info("Updated BLOG image: blogId={}, url={}", event.ownerId(), event.url());
                         });
             }
@@ -84,6 +98,18 @@ public class ProductUploadListener {
                             word.setImageId(event.imageId());
                             word.setImageUrl(event.url());
                             wordRepository.save(word);
+                            wordService.evictWordCache(event.ownerId());
+                            log.info("Updated WORD image: wordId={}, url={}", event.ownerId(), event.url());
+                        });
+            }
+
+            case "LESSON" -> {
+                lessonRepository.findById(event.ownerId())
+                        .ifPresent(word-> {
+                            word.setThumbnailId(event.imageId());
+                            word.setThumbnail(event.url());
+                            lessonRepository.save(word);
+                            lessonService.evictLessonCache(event.ownerId());
                             log.info("Updated WORD image: wordId={}, url={}", event.ownerId(), event.url());
                         });
             }
@@ -100,6 +126,7 @@ public class ProductUploadListener {
                                 word.setAudio(event.url());
                                 word.setAudioId(event.imageId());
                                 wordRepository.save(word);
+                                wordService.evictWordCache(event.ownerId());
                                 log.info("Updated WORD audio: wordId={}, url={}", event.ownerId(), event.url());
                             }
                     );
@@ -107,9 +134,10 @@ public class ProductUploadListener {
         else if( ownerType.equals("LESSON") ){
             lessonRepository.findById(event.ownerId())
                     .ifPresent(lesson -> {
-                        lesson.setThumbnail(event.url());
-                        lesson.setThumbnailId(event.imageId());
+                        lesson.setVideo(event.url());
+                        lesson.setVideoId(event.imageId());
                         lessonRepository.save(lesson);
+                        lessonService.evictLessonCache(event.ownerId());
                         log.info("Updated LESSON audio: lessonId={}, url={}", event.ownerId(), event.url());
                     });
         }

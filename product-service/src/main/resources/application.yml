@@ -5,6 +5,9 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://eureka-server:8761/eureka
+  instance:
+    prefer-ip-address: false
+    hostname: product-service
 
 api:
   prefix: /api/v1
@@ -45,3 +48,11 @@ spring:
       properties:
         spring.json.trusted.packages: "com.mck.study5.*"
 
+  data:
+    redis:
+      host: redis
+      port: 6379
+  cache:
+    type: redis
+    redis:
+      time-to-live: 1800000 #30 mins

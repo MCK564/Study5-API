@@ -14,4 +14,5 @@ public interface ILessonService {
     void updateProgress(Long lessonId, Long userId);
     ListLessonResponse getAllLessonsByCourseId(Long courseId);
     void updateLessonVideo(Long courseId, String videoUrl, Long videoId);
+    void evictLessonCache(Long id);
 }

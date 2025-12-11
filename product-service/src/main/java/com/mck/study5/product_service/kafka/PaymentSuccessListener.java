@@ -9,6 +9,8 @@ import com.mck.study5.product_service.models.Course;
 import com.mck.study5.product_service.models.CourseEnrollment;
 import com.mck.study5.product_service.repositories.CourseEnrollmentRepository;
 import com.mck.study5.product_service.repositories.CourseRepository;
+import com.mck.study5.product_service.services.courses.CourseService;
+import com.mck.study5.product_service.services.courses.ICourseService;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +35,7 @@ import java.util.Map;
 public class PaymentSuccessListener {
     private final CourseEnrollmentRepository courseEnrollmentRepository;
     private final CourseRepository courseRepository;
+    private final ICourseService courseService;
 
 
     @KafkaListener(
@@ -59,7 +62,7 @@ public class PaymentSuccessListener {
                 .build();
 
         courseEnrollmentRepository.save(newCourseEnrollment);
+        courseService.evictUnlockCourseCache(event.userId());
         log.info("Saved new course enrollment: {}", newCourseEnrollment);
-
     }
 }

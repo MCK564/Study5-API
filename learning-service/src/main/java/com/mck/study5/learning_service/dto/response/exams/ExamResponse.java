@@ -45,6 +45,12 @@ public class ExamResponse {
     @JsonProperty("thumbnail_id")
     private Long thumbnailId;
 
+    @JsonProperty("audio_url")
+    private String audioUrl;
+
+    @JsonProperty("audio_id")
+    private Long audioId;
+
     public static ExamResponse from(Exam exam) {
         return ExamResponse.builder()
                 .id(exam.getId())
@@ -57,9 +63,11 @@ public class ExamResponse {
                 .categoryId(exam.getCategory().getId())
                 .numberOfCompletion(exam.getNumberOfCompletion())
                 .categoryId(exam.getCategory().getId())
-                .numberOfCompletion(exam.getNumberOfCompletion())
+                .numberOfQuestion(exam.getQuestions().size())
                 .thumbnailId(exam.getThumbnailId())
                 .thumbnailUrl(exam.getThumbnailUrl())
+                .audioUrl(exam.getAudioUrl())
+                .audioId(exam.getAudioId())
                 .build();
     }
 }

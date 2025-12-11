@@ -10,6 +10,8 @@ import com.mck.study5.product_service.responses.subject.SubjectListResponse;
 import com.mck.study5.product_service.responses.subject.SubjectResponse;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +22,7 @@ public class SubjectService implements ISubjectService{
     private final SubjectRepository subjectRepository;
 
     @Override
+    @Cacheable(value = "redisSubjects", key = "1")
     public SubjectListResponse getSubjects() {
         List<SubjectResponse> subjectResponses = subjectRepository
                 .findAll()
@@ -31,6 +34,7 @@ public class SubjectService implements ISubjectService{
     }
 
     @Override
+    @CacheEvict(value = "redisSubjects", allEntries = true)
     public SubjectResponse createOrUpdateSubject(SubjectDTO dto) {
        Subject subject;
        if(dto.getId()!=null){
@@ -45,6 +49,7 @@ public class SubjectService implements ISubjectService{
     }
 
     @Override
+    @CacheEvict(value = "redisSubjects", allEntries = true)
     public SubjectResponse deleteSubject(Long id) {
        Subject subject = subjectRepository.findById(id)
                .orElseThrow(()->new DataNotFoundException(MessageKeys.SUBJECT_NOT_FOUND));

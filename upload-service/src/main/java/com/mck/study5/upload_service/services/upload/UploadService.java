@@ -219,7 +219,10 @@ public class UploadService implements IUploadService {
                 builder.ownerType(MediaOwnerType.FLASHCARD.getType());
             } else if (belongToObject.startsWith("EXAM_")) {
                 builder.ownerType(MediaOwnerType.EXAM.getType());
+            } else if (belongToObject.startsWith("LESSON_")) {
+                builder.ownerType(MediaOwnerType.LESSON.getType());
             }
+
         }
 
         mediaEventProducer.publishMediaDeleted(builder.build());
@@ -239,16 +242,22 @@ public class UploadService implements IUploadService {
         String originalFilename = file.getOriginalFilename();
         String key = "audios/" + UUID.randomUUID() + "-" + (originalFilename != null ? originalFilename : "audio");
 
+        byte[] bytes;
         try {
+            // ✅ Đọc toàn bộ nội dung file vào byte[]
+            bytes = file.getBytes();
+
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
                     .key(key)
                     .contentType(file.getContentType())
+                    .contentLength((long) bytes.length) // thêm cho chắc cú
                     .build();
 
+            // ✅ Không dùng InputStream nữa, dùng bytes nên không cần mark/reset
             s3Client.putObject(
                     putObjectRequest,
-                    RequestBody.fromInputStream(file.getInputStream(), file.getSize())
+                    RequestBody.fromBytes(bytes)
             );
 
         } catch (IOException e) {
@@ -277,7 +286,8 @@ public class UploadService implements IUploadService {
 
             audio.setUrl(url);
             audio.setName(dto.getName() != null ? dto.getName() : originalFilename);
-            audio.setSize(file.getSize());
+
+            audio.setSize((long) bytes.length);
             audio.setBelongToId(dto.getBelongToId());
             audio.setBelongToObject(dto.getBelongToObject());
             audio.setMediaKind(MediaKind.AUDIO.getKind());
@@ -286,7 +296,7 @@ public class UploadService implements IUploadService {
             audio = Audio.builder()
                     .name(dto.getName() != null ? dto.getName() : originalFilename)
                     .url(url)
-                    .size(file.getSize())
+                    .size((long) bytes.length)
                     .belongToId(dto.getBelongToId())
                     .belongToObject(dto.getBelongToObject())
                     .mediaKind(MediaKind.AUDIO.getKind())
@@ -298,7 +308,7 @@ public class UploadService implements IUploadService {
         // Up event cho AUDIO
         MediaUploadedEvent.MediaUploadedEventBuilder builder = MediaUploadedEvent.builder()
                 .ownerId(dto.getBelongToId())
-                .imageId(saved.getId()) // nếu event dùng field "imageId" cho mọi media thì giữ nguyên, nếu có "mediaId" thì đổi lại
+                .imageId(saved.getId()) // nếu event dùng field "imageId" chung cho mọi media thì OK
                 .mediaKind(MediaKind.AUDIO.getKind())
                 .mediaUsage(MediaUsage.CONTENT.getUsage())
                 .url(saved.getUrl());
@@ -314,13 +324,19 @@ public class UploadService implements IUploadService {
                 builder.ownerType(MediaOwnerType.EXAM.getType());
             } else if (belongToObject.startsWith("FLASHCARD_")) {
                 builder.ownerType(MediaOwnerType.FLASHCARD.getType());
+            } else if (belongToObject.startsWith("EXAM_")) {
+                builder.ownerType(MediaOwnerType.EXAM.getType());
+            } else if (belongToObject.startsWith("LESSON_")) {
+                builder.ownerType(MediaOwnerType.LESSON.getType());
             }
+
         }
 
         mediaEventProducer.publishMediaUploaded(builder.build());
 
         return saved;
     }
+
 
     @Override
     public Audio getAudioById(Long id) {

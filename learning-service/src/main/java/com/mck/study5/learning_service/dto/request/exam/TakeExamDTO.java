@@ -13,5 +13,4 @@ public class TakeExamDTO {
     @JsonProperty("exam_attempt_id")
     private Long examAttemptId;
     List<QuestionCompleteExamDTO> questions = new ArrayList<>();
-
 }

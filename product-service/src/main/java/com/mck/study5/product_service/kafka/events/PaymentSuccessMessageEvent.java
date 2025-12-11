@@ -11,7 +11,8 @@ public record PaymentSuccessMessageEvent
                 Long paymentId,
                 String email,
                 String createdDate,
-                String description
+                String description,
+                Long amount
         )
 {
 }

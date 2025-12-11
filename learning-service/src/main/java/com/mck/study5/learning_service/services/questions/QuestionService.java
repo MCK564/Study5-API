@@ -59,6 +59,7 @@ public class QuestionService implements  IQuestionService{
         return QuestionListResponse.builder()
                 .quantity(questionResponses.size())
                 .responses(questionResponses)
+                .audioUrl(attempt.getExam().getAudioUrl())
                 .build();
 
     }

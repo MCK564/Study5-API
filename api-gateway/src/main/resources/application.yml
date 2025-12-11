@@ -180,6 +180,7 @@ eureka:
       defaultZone: http://eureka-server:8761/eureka
   instance:
     prefer-ip-address: false
+    hostname: api-gateway
 
 management:
   endpoints:

@@ -9,10 +9,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Service;
 
 @Slf4j
 @ComponentScan
 @RequiredArgsConstructor
+@Service
 public class ExamUploadListener {
     private final ExamRepository examRepository;
     private final QuestionRepository questionRepository;
@@ -52,7 +54,6 @@ public class ExamUploadListener {
                         });
             }
 
-
             case "EXAM" -> {
                 examRepository.findById(event.ownerId())
                         .ifPresent(exam -> {
@@ -77,6 +78,15 @@ public class ExamUploadListener {
                             question.setAudioId(event.imageId());
                             questionRepository.save(question);
                             log.info("Updated QUESTION audio: questionId={}, url={}", event.ownerId(), event.url());
+                        });
+            }
+            case "EXAM" -> {
+                examRepository.findById(event.ownerId())
+                        .ifPresent(exam -> {
+                            exam.setAudioUrl(event.url());
+                            exam.setAudioId(event.imageId());
+                            examRepository.save(exam);
+                            log.info("Updated EXAM image: examId={}, url={}", event.ownerId(), event.url());
                         });
             }
         }

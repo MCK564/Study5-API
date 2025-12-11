@@ -1,5 +1,6 @@
 package com.mck.study5.product_service.services.blogs;
 
+import com.mck.study5.product_service.converter.Converter;
 import com.mck.study5.product_service.models.Blog;
 import com.mck.study5.product_service.models.BlogCategory;
 import com.mck.study5.product_service.repositories.BlogCategoryRepository;
@@ -12,6 +13,10 @@ import com.mck.study5.product_service.responses.blogs.BlogListResponse;
 import com.mck.study5.product_service.responses.blogs.BlogResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +30,7 @@ import java.util.List;
 public class BlogService implements IBlogService{
     private final BlogRepository blogRepository;
     private final BlogCategoryRepository blogCategoryRepository;
+    private final Converter converter;
 
     @Override
     public BlogListResponse getBlogs(int page, int size) {
@@ -39,6 +45,7 @@ public class BlogService implements IBlogService{
     }
 
     @Override
+    @Cacheable(value="redisBlog", key = "#id")
     public BlogResponse getBlog(Long id) {
        if(blogRepository.existsById(id)){
            Blog existingBlog = blogRepository.findById(id).get();
@@ -50,18 +57,26 @@ public class BlogService implements IBlogService{
     }
 
     @Override
+    @Caching(
+            evict = {
+                    @CacheEvict(value  = "redisBlog" , key = "#blogDTO.id", condition = "#blogDTO.id != null"),
+            },
+            put  = {
+                    @CachePut(value = "redisBlog", key = "#blogDTO.id" , condition = "#blogDTO.id != null")
+            }
+    )
     public BlogResponse createOrUpdate(BlogDTO blogDTO) {
-        Blog blog = Blog.fromDTO(blogDTO);
-        Blog savedBlog ;
-        int isUpdate = 0;
-        if(blogDTO.getId()!=null && blogRepository.existsById(blogDTO.getId())){
-            blog.setId(blogDTO.getId());
-        }
-        savedBlog = blogRepository.save(blog);
+        Blog blog;
+        if(blogDTO.getId()!=null) blog = blogRepository.findById(blogDTO.getId()).get();
+        else blog = converter.fromBlogDTO(blogDTO);
+
+        blog.setCategory(blogCategoryRepository.findById(blogDTO.getCategoryId()).get());
+        Blog savedBlog = blogRepository.save(blog);
         return Blog.toResponse(savedBlog);
     }
 
     @Override
+    @CacheEvict(value = {"redisBlog","redisBlogs"}, allEntries = true)
     public BlogResponse delete(Long id) {
         if(blogRepository.existsById(id)){
             blogRepository.deleteById(id);
@@ -71,9 +86,10 @@ public class BlogService implements IBlogService{
     }
 
     @Override
+    @Cacheable(value = "redisBlogs", key = "#keyword+'_' +#page + '_'+ #size")
     public BlogListResponse getBlogsByKeyword(String keyword, int page, int size) {
-        Page<Blog> results = blogRepository.findAllByKeyword(keyword,
-                PageRequest.of(page,size,Sort.by(Sort.Direction.DESC,"createdDate")));
+        Page<Blog> results = blogRepository.searchByKeyword(keyword,
+                PageRequest.of(page-1,size,Sort.by(Sort.Direction.DESC,"createdDate")));
         List<BlogResponse> blogResponses = results.getContent().stream().map(Blog::toResponse).toList();
         return BlogListResponse.builder()
                 .blogs(blogResponses)
@@ -83,6 +99,7 @@ public class BlogService implements IBlogService{
     }
 
     @Override
+    @Cacheable(value = "redisBlogCategories", key = "1")
     public BlogCategoryListResponse getBlogCategories() {
         List<BlogCategoryResponse>  responses = blogCategoryRepository
                 .findAll()
@@ -96,6 +113,7 @@ public class BlogService implements IBlogService{
     }
 
     @Override
+    @CacheEvict(value = {"redisBlogCategories"}, allEntries = true)
     public BlogCategoryResponse createOrUpdateCategory(BlogCategoryDTO dto) {
         BlogCategory category ;
         if(dto.getId()!=null){
@@ -118,7 +136,6 @@ public class BlogService implements IBlogService{
                 .orElseThrow(()->new EntityNotFoundException("Category not found")));
         blogCategoryRepository.deleteById(id);
         return response;
-
     }
 
     @Override
@@ -127,5 +144,10 @@ public class BlogService implements IBlogService{
         blog.setThumbnailId(imageId);
         blog.setThumbnail(imageUrl);
         blogRepository.save(blog);
+    }
+
+    @Override
+    @CacheEvict(value = {"redisBlog","redisBlogs"}, allEntries = true)
+    public void evictBlogCache(Long id) {
     }
 }

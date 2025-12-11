@@ -34,7 +34,7 @@ public class AuthController {
     private final OAuthAuthorizeService oAuthAuthorizeService;
     private final ExternalOAuthService externalOAuthService;
 
-    @Value(value = "${redirect-after")
+    @Value(value = "${redirect-after}")
     private String redirectAfter;
 
     @PostMapping("/oauth2/success")

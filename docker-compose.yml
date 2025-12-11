@@ -124,7 +124,7 @@ services:
       - SPRING_DEVTOOLS_RESTART_QUIET_PERIOD=1s
 
     healthcheck:
-      test: [ "CMD","/opt/kafka/bin/kafka-topics.sh","--bootstrap-server","kafka:9092","--list" ]
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
       interval: 10s
       timeout: 10s
       retries: 20

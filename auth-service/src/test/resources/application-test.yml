@@ -1,0 +1,35 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:authdb;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop      # tự tạo + drop bảng từ entity khi test
+    show-sql: false
+    database-platform: org.hibernate.dialect.H2Dialect
+    properties:
+      hibernate:
+        format_sql: true
+  main:
+    allow-bean-definition-overriding: true
+
+# Nếu sau này có bật Flyway/Liquibase thì tắt khi test cho đỡ lỗi:
+#  flyway:
+#    enabled: false
+#  liquibase:
+#    enabled: false
+# Tắt eureka khi test, đỡ lỗi lặt vặt
+
+eureka:
+  client:
+    enabled: false
+
+GOOGLE_OAUTH_CREDENTIALS_PATH: ./secrets/google_client_secret.json
+FACEBOOK_OAUTH_CREDENTIALS_PATH: ./secrets/facebook_client_secret.json
+
+google:
+  oauth:
+    enabled: false

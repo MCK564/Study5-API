@@ -14,4 +14,5 @@ public interface IPaymentService {
     RedirectView handleVnPayReturn(Map<String, String> params);
     String createPaymentUrlByPayOs(PaymentRequest dto, Long userId);
     RedirectView handlePayPalReturn(Map<String, String> params);
+    PaymentListResponse adminSearchPayment(Long userId, Long courseId, Integer page, Integer size);
 }

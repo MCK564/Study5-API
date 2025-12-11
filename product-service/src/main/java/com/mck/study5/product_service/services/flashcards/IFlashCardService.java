@@ -11,4 +11,5 @@ public interface IFlashCardService {
     FlashCardResponse deleteById(Long id);
     void updateThumbnail(Long flashCardId, Long thumbnailId, String thumbnailUrl);
     void deleteThumbnail(Long flashCardId);
+    void evictFlashCardCache(Long id);
 }

@@ -7,11 +7,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @EntityScan(basePackages = "com.mck.study5.user_service.models")
-@EnableJpaRepositories(basePackages = "com.mck.study5.user_service.repositories")
 public class UserServiceApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(UserServiceApplication.class, args);
 	}
-
 }

@@ -46,4 +46,13 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(userService.updateUserDetail(userId, userUpdateDTO), 200, MessageKeys.SUCCESS));
     }
 
+    @GetMapping("/admin/search")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<?>> adminSearchUser(
+            @RequestParam(value = "keyword")String keyword,
+            @RequestParam(value="page", defaultValue = "1")Integer page,
+            @RequestParam(value="size", defaultValue = "20")Integer size
+    ){
+        return ResponseEntity.ok(ApiResponse.success(userService.adminSearchUsers(keyword, page, size), 200, MessageKeys.SUCCESS));
+    }
 }

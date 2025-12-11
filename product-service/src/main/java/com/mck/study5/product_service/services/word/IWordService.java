@@ -8,4 +8,6 @@ public interface IWordService {
       ListWordResponse findAllByConditions(int page, int limit, String keyword, Long flashCardId);
       WordResponse createOrUpdateWord(WordDTO dto);
       WordResponse deleteWord(Long id);
+      void updateAudio(Long wordId, Long audioId, String audioUrl);
+      void evictWordCache(Long id);
 }

@@ -15,8 +15,19 @@ import java.util.List;
 @Repository
 public interface BlogRepository extends JpaRepository<Blog,Long> {
     @Query("Select b FROM Blog b JOIN b.keywords k WHERE k IN :keywords ")
-    Page<Blog> findAllByKeywords(@Param("keywords")List<String> keywords, Pageable pageable);
+    Page<Blog> findAllByKeywords(@Param("keyword")List<String> keywords, Pageable pageable);
 
     @Query("Select b FROM Blog b JOIN b.keywords k WHERE k =:keyword ")
-    Page<Blog> findAllByKeyword(@Param("keywords")String keyword, Pageable pageable);
+    Page<Blog> findAllByKeyword(@Param("keyword")String keyword, Pageable pageable);
+
+    @Query("""
+        SELECT b FROM Blog b
+        WHERE 
+            (:keyword IS NULL OR :keyword = '' 
+             OR LOWER(b.title)    LIKE LOWER(CONCAT('%', :keyword, '%'))
+             OR LOWER(b.subtitle) LIKE LOWER(CONCAT('%', :keyword, '%'))
+             OR LOWER(b.keywords)  LIKE LOWER(CONCAT('%', :keyword, '%'))
+            )
+        """)
+    Page<Blog> searchByKeyword(@Param("keyword") String keyword, Pageable pageable);
 }

@@ -9,9 +9,17 @@ public class QuestionCreateOrUpdateDTO {
     private String script;
     private String question;
     private String transcript;
+
+    @JsonProperty("A")
     private String answerA;
+
+    @JsonProperty("B")
     private String answerB;
+
+    @JsonProperty("C")
     private String answerC;
+
+   @JsonProperty("D")
     private String answerD;
 
     @JsonProperty("detailed_explanation")
